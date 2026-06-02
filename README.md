@@ -9,6 +9,7 @@ This project is not investment advice, a trading signal service, or a live tradi
 - Leakage-aware validation for financial time-series experiments
 - Walk-forward evaluation instead of random train/test splits
 - Purged and embargoed validation splits for label-overlap leakage control
+- HMM-style regime detection and feature pipelines with train-only fitting
 - Risk-aware model evaluation with CVaR / Expected Shortfall
 - Distributional RL patterns such as QR-DQN return quantiles
 - FastAPI model serving with model version visibility
@@ -84,6 +85,7 @@ agentic-quant-trading-python/
       cvar_position_sizing.md
       walk_forward_validation.md
       purged_embargo_validation.md
+      hmm_regime_features.md
 ```
 
 ## Public / Private Boundary
@@ -95,6 +97,7 @@ Public:
 - model serving patterns
 - drift monitoring examples
 - QR-DQN / CVaR educational modules
+- HMM-style regime labeling and feature-pipeline examples
 - benchmark methodology
 - purged / embargoed validation split examples
 - reproducible commands and tests
@@ -129,7 +132,8 @@ Private:
 5. Add CVaR-aware position sizing example. Done.
 6. Add walk-forward validation sample. Done.
 7. Add purged + embargoed validation sample. Done.
-8. Connect repo to QuantSigma.ai, Medium, and LinkedIn Featured.
+8. Add HMM-style regime detection + feature pipeline sample. Done.
+9. Connect repo to QuantSigma.ai, Medium, and LinkedIn Featured.
 
 ## Local Commands
 
@@ -139,6 +143,7 @@ make drift-demo
 make cvar-demo
 make walk-forward-demo
 make purged-embargo-demo
+make regime-feature-demo
 make reload-demo
 make serve
 ```
@@ -146,7 +151,7 @@ make serve
 Current test coverage:
 
 ```text
-27 tests passing, including CVaR risk logic, drift monitoring, walk-forward validation, purged/embargoed validation, and a subprocess-backed uvicorn E2E test.
+32 tests passing, including CVaR risk logic, drift monitoring, walk-forward validation, purged/embargoed validation, HMM-style regime features, and a subprocess-backed uvicorn E2E test.
 ```
 
 Drift report demo:
@@ -195,6 +200,18 @@ Output:
 
 ```text
 docs/benchmarks/purged_embargo_validation.md
+```
+
+HMM-style regime feature demo:
+
+```text
+make regime-feature-demo
+```
+
+Output:
+
+```text
+docs/benchmarks/hmm_regime_features.md
 ```
 
 Demo reload request after `make reload-demo` and `make serve`:

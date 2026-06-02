@@ -14,7 +14,9 @@ This repo is a sanitized public companion. It does not mirror the private tradin
 | Drift report | done | Uses sample feature distributions only; reports PSI, KS, severity counts, and a Markdown boundary note. |
 | QR-DQN quantile smoke test | done | Uses synthetic return quantiles only. |
 | CVaR position sizing example | done | Demonstrates risk multiplier without private strategy thresholds. |
-| Walk-forward validation doc | planned | Focus on leakage rules and protocol. |
+| Walk-forward validation doc | done | Demonstrates time-ordered train / validation / test windows. |
+| Purged + embargoed validation doc | done | Demonstrates label-overlap leakage control. |
+| HMM-style regime feature pipeline | done | Fits feature standardization and regime model on training windows only. |
 
 ## Keep Private
 
@@ -42,7 +44,10 @@ FastAPI + PyTorch checkpoint hot reload + model_version response
 - Live-server E2E test around the serving API
 - Synthetic feature drift report with PSI / KS metrics
 - QR-DQN / CVaR smoke example with synthetic quantiles
+- Walk-forward validation
+- Purged + embargoed validation
+- HMM-style regime labels and rolling feature pipeline
 
 ## Next Public Module Candidate
 
-Add walk-forward validation with sample data. Keep it focused on leakage rules and protocol rather than private universe selection or strategy thresholds.
+Add a small backtest orchestration sample that wires features, validation, and risk metrics together without exposing private universe selection or strategy thresholds.

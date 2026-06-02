@@ -58,6 +58,26 @@ This sample focuses on label-overlap leakage:
 - samples immediately after the test block are embargoed
 - all ranges are synthetic index ranges only
 
+## HMM-Style Regime Features
+
+```bash
+make regime-feature-demo
+```
+
+Output:
+
+```text
+docs/benchmarks/hmm_regime_features.md
+```
+
+This sample focuses on leakage-aware feature engineering:
+
+- rolling returns, realized volatility, drawdown, and momentum features are computed from available history
+- feature standardization is fit on the training window only
+- the Gaussian emission regime model is fit on the training window only
+- low-vol / high-vol hidden states are decoded with Viterbi
+- held-out test rows receive labels from the training-fitted model
+
 ## Metrics
 
 Recommended public metrics:
@@ -76,4 +96,5 @@ Recommended public metrics:
 - No random shuffle split for time-series
 - No post-hoc threshold selection on the test set
 - No label interval overlap between train and held-out test labels
+- No regime model fit using validation or test windows
 - No private live strategy parameters in public docs
