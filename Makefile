@@ -1,4 +1,4 @@
-.PHONY: test serve reload-demo drift-demo cvar-demo walk-forward-demo purged-embargo-demo regime-feature-demo mini-backtest-demo
+.PHONY: test serve reload-demo drift-demo cvar-demo walk-forward-demo purged-embargo-demo regime-feature-demo mini-backtest-demo manifest-demo
 
 test:
 	python -m pytest
@@ -26,3 +26,6 @@ regime-feature-demo:
 
 mini-backtest-demo:
 	PYTHONPATH=src python -m agentic_quant.experiments.demo_mini_backtest --output docs/benchmarks/mini_backtest_orchestration.md
+
+manifest-demo:
+	PYTHONPATH=src python -m agentic_quant.experiments.demo_manifest --output docs/benchmarks/experiment_manifest.md

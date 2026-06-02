@@ -99,6 +99,28 @@ This sample connects the public building blocks into one experiment loop:
 - transaction costs, CVaR-style tail risk, drawdown, and turnover are reported
 - all data remains synthetic and strategy-agnostic
 
+## Experiment Manifest / Run Log
+
+```bash
+make manifest-demo
+```
+
+Output:
+
+```text
+docs/benchmarks/experiment_manifest.md
+```
+
+This sample records the metadata around a public experiment:
+
+- deterministic run id
+- experiment parameters
+- validation protocol
+- artifact paths
+- public/private boundary
+- aggregate test metrics across folds
+- JSON snapshot for easy inspection
+
 ## Metrics
 
 Recommended public metrics:

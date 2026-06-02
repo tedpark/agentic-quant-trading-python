@@ -18,6 +18,7 @@ This repo is a sanitized public companion. It does not mirror the private tradin
 | Purged + embargoed validation doc | done | Demonstrates label-overlap leakage control. |
 | HMM-style regime feature pipeline | done | Fits feature standardization and regime model on training windows only. |
 | Mini backtest orchestration | done | Connects synthetic features, regimes, validation selection, transaction costs, and CVaR-style metrics. |
+| Experiment manifest / run log | done | Records parameters, validation protocol, artifacts, and public/private boundaries for reproducible public runs. |
 
 ## Keep Private
 
@@ -49,7 +50,8 @@ FastAPI + PyTorch checkpoint hot reload + model_version response
 - Purged + embargoed validation
 - HMM-style regime labels and rolling feature pipeline
 - Mini backtest orchestration for an end-to-end synthetic experiment loop
+- Experiment manifest / run log for synthetic public artifacts
 
 ## Next Public Module Candidate
 
-Add a reproducible experiment manifest or MLflow-style run log that records parameters, artifact paths, validation protocol, and public/private boundaries.
+Add a small external benchmark trail such as Numerai, Kaggle, or another public leaderboard artifact.
