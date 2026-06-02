@@ -1,4 +1,4 @@
-.PHONY: test serve reload-demo drift-demo cvar-demo walk-forward-demo
+.PHONY: test serve reload-demo drift-demo cvar-demo walk-forward-demo purged-embargo-demo
 
 test:
 	python -m pytest
@@ -17,3 +17,6 @@ cvar-demo:
 
 walk-forward-demo:
 	PYTHONPATH=src python -m agentic_quant.validation.demo_walk_forward --output docs/benchmarks/walk_forward_validation.md
+
+purged-embargo-demo:
+	PYTHONPATH=src python -m agentic_quant.validation.demo_purged_embargo --output docs/benchmarks/purged_embargo_validation.md

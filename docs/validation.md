@@ -39,6 +39,25 @@ The sample uses synthetic observations and keeps the protocol explicit:
 - aggregate only test metrics across folds
 - avoid private universes, broker data, alpha features, and production thresholds
 
+## Purged + Embargoed Validation
+
+```bash
+make purged-embargo-demo
+```
+
+Output:
+
+```text
+docs/benchmarks/purged_embargo_validation.md
+```
+
+This sample focuses on label-overlap leakage:
+
+- each sample has a forward-looking label interval
+- train candidates whose label intervals overlap the held-out test label interval are purged
+- samples immediately after the test block are embargoed
+- all ranges are synthetic index ranges only
+
 ## Metrics
 
 Recommended public metrics:
@@ -56,4 +75,5 @@ Recommended public metrics:
 - No global normalization before split
 - No random shuffle split for time-series
 - No post-hoc threshold selection on the test set
+- No label interval overlap between train and held-out test labels
 - No private live strategy parameters in public docs

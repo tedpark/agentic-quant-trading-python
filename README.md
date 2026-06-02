@@ -8,6 +8,7 @@ This project is not investment advice, a trading signal service, or a live tradi
 
 - Leakage-aware validation for financial time-series experiments
 - Walk-forward evaluation instead of random train/test splits
+- Purged and embargoed validation splits for label-overlap leakage control
 - Risk-aware model evaluation with CVaR / Expected Shortfall
 - Distributional RL patterns such as QR-DQN return quantiles
 - FastAPI model serving with model version visibility
@@ -82,6 +83,7 @@ agentic-quant-trading-python/
       qrdqn_smoke.md
       cvar_position_sizing.md
       walk_forward_validation.md
+      purged_embargo_validation.md
 ```
 
 ## Public / Private Boundary
@@ -94,6 +96,7 @@ Public:
 - drift monitoring examples
 - QR-DQN / CVaR educational modules
 - benchmark methodology
+- purged / embargoed validation split examples
 - reproducible commands and tests
 
 Private:
@@ -125,7 +128,8 @@ Private:
 4. Add QR-DQN quantile smoke test. Done.
 5. Add CVaR-aware position sizing example. Done.
 6. Add walk-forward validation sample. Done.
-7. Connect repo to QuantSigma.ai, Medium, and LinkedIn Featured.
+7. Add purged + embargoed validation sample. Done.
+8. Connect repo to QuantSigma.ai, Medium, and LinkedIn Featured.
 
 ## Local Commands
 
@@ -134,6 +138,7 @@ make test
 make drift-demo
 make cvar-demo
 make walk-forward-demo
+make purged-embargo-demo
 make reload-demo
 make serve
 ```
@@ -141,7 +146,7 @@ make serve
 Current test coverage:
 
 ```text
-23 tests passing, including CVaR risk logic, drift monitoring, walk-forward validation, and a subprocess-backed uvicorn E2E test.
+27 tests passing, including CVaR risk logic, drift monitoring, walk-forward validation, purged/embargoed validation, and a subprocess-backed uvicorn E2E test.
 ```
 
 Drift report demo:
@@ -178,6 +183,18 @@ Output:
 
 ```text
 docs/benchmarks/walk_forward_validation.md
+```
+
+Purged + embargoed validation demo:
+
+```text
+make purged-embargo-demo
+```
+
+Output:
+
+```text
+docs/benchmarks/purged_embargo_validation.md
 ```
 
 Demo reload request after `make reload-demo` and `make serve`:
