@@ -17,6 +17,7 @@ This repo is a sanitized public companion. It does not mirror the private tradin
 | Walk-forward validation doc | done | Demonstrates time-ordered train / validation / test windows. |
 | Purged + embargoed validation doc | done | Demonstrates label-overlap leakage control. |
 | HMM-style regime feature pipeline | done | Fits feature standardization and regime model on training windows only. |
+| Mini backtest orchestration | done | Connects synthetic features, regimes, validation selection, transaction costs, and CVaR-style metrics. |
 
 ## Keep Private
 
@@ -47,7 +48,8 @@ FastAPI + PyTorch checkpoint hot reload + model_version response
 - Walk-forward validation
 - Purged + embargoed validation
 - HMM-style regime labels and rolling feature pipeline
+- Mini backtest orchestration for an end-to-end synthetic experiment loop
 
 ## Next Public Module Candidate
 
-Add a small backtest orchestration sample that wires features, validation, and risk metrics together without exposing private universe selection or strategy thresholds.
+Add a reproducible experiment manifest or MLflow-style run log that records parameters, artifact paths, validation protocol, and public/private boundaries.

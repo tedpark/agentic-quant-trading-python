@@ -10,6 +10,7 @@ This project is not investment advice, a trading signal service, or a live tradi
 - Walk-forward evaluation instead of random train/test splits
 - Purged and embargoed validation splits for label-overlap leakage control
 - HMM-style regime detection and feature pipelines with train-only fitting
+- Mini backtest orchestration that connects features, regimes, validation, and CVaR-style risk metrics
 - Risk-aware model evaluation with CVaR / Expected Shortfall
 - Distributional RL patterns such as QR-DQN return quantiles
 - FastAPI model serving with model version visibility
@@ -86,6 +87,7 @@ agentic-quant-trading-python/
       walk_forward_validation.md
       purged_embargo_validation.md
       hmm_regime_features.md
+      mini_backtest_orchestration.md
 ```
 
 ## Public / Private Boundary
@@ -98,6 +100,7 @@ Public:
 - drift monitoring examples
 - QR-DQN / CVaR educational modules
 - HMM-style regime labeling and feature-pipeline examples
+- mini backtest orchestration with synthetic data only
 - benchmark methodology
 - purged / embargoed validation split examples
 - reproducible commands and tests
@@ -133,7 +136,8 @@ Private:
 6. Add walk-forward validation sample. Done.
 7. Add purged + embargoed validation sample. Done.
 8. Add HMM-style regime detection + feature pipeline sample. Done.
-9. Connect repo to QuantSigma.ai, Medium, and LinkedIn Featured.
+9. Add mini backtest orchestration sample. Done.
+10. Connect repo to QuantSigma.ai, Medium, and LinkedIn Featured.
 
 ## Local Commands
 
@@ -144,6 +148,7 @@ make cvar-demo
 make walk-forward-demo
 make purged-embargo-demo
 make regime-feature-demo
+make mini-backtest-demo
 make reload-demo
 make serve
 ```
@@ -151,7 +156,7 @@ make serve
 Current test coverage:
 
 ```text
-32 tests passing, including CVaR risk logic, drift monitoring, walk-forward validation, purged/embargoed validation, HMM-style regime features, and a subprocess-backed uvicorn E2E test.
+37 tests passing, including CVaR risk logic, drift monitoring, walk-forward validation, purged/embargoed validation, HMM-style regime features, mini backtest orchestration, and a subprocess-backed uvicorn E2E test.
 ```
 
 Drift report demo:
@@ -212,6 +217,18 @@ Output:
 
 ```text
 docs/benchmarks/hmm_regime_features.md
+```
+
+Mini backtest orchestration demo:
+
+```text
+make mini-backtest-demo
+```
+
+Output:
+
+```text
+docs/benchmarks/mini_backtest_orchestration.md
 ```
 
 Demo reload request after `make reload-demo` and `make serve`:

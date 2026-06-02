@@ -78,6 +78,27 @@ This sample focuses on leakage-aware feature engineering:
 - low-vol / high-vol hidden states are decoded with Viterbi
 - held-out test rows receive labels from the training-fitted model
 
+## Mini Backtest Orchestration
+
+```bash
+make mini-backtest-demo
+```
+
+Output:
+
+```text
+docs/benchmarks/mini_backtest_orchestration.md
+```
+
+This sample connects the public building blocks into one experiment loop:
+
+- rolling features are paired with next-period forward returns
+- feature standardization and regime labels are fit on the training window only
+- thresholds are selected on validation only
+- test metrics are reported only after threshold selection
+- transaction costs, CVaR-style tail risk, drawdown, and turnover are reported
+- all data remains synthetic and strategy-agnostic
+
 ## Metrics
 
 Recommended public metrics:
@@ -97,4 +118,5 @@ Recommended public metrics:
 - No post-hoc threshold selection on the test set
 - No label interval overlap between train and held-out test labels
 - No regime model fit using validation or test windows
+- No validation threshold selection on the test window
 - No private live strategy parameters in public docs
