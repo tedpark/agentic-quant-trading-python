@@ -1,4 +1,4 @@
-.PHONY: test serve reload-demo drift-demo cvar-demo walk-forward-demo purged-embargo-demo regime-feature-demo mini-backtest-demo manifest-demo
+.PHONY: test serve reload-demo drift-demo cvar-demo walk-forward-demo purged-embargo-demo regime-feature-demo mini-backtest-demo manifest-demo numerai-demo
 
 test:
 	python -m pytest
@@ -29,3 +29,6 @@ mini-backtest-demo:
 
 manifest-demo:
 	PYTHONPATH=src python -m agentic_quant.experiments.demo_manifest --output docs/benchmarks/experiment_manifest.md
+
+numerai-demo:
+	PYTHONPATH=src python -m agentic_quant.benchmarks.demo_numerai --output docs/benchmarks/numerai_benchmark_trail.md

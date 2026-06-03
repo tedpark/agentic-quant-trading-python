@@ -12,6 +12,7 @@ This project is not investment advice, a trading signal service, or a live tradi
 - HMM-style regime detection and feature pipelines with train-only fitting
 - Mini backtest orchestration that connects features, regimes, validation, and CVaR-style risk metrics
 - Reproducible experiment manifests / run logs for public artifacts
+- Numerai benchmark-trail preparation with submission format validation
 - Risk-aware model evaluation with CVaR / Expected Shortfall
 - Distributional RL patterns such as QR-DQN return quantiles
 - FastAPI model serving with model version visibility
@@ -90,6 +91,7 @@ agentic-quant-trading-python/
       hmm_regime_features.md
       mini_backtest_orchestration.md
       experiment_manifest.md
+      numerai_benchmark_trail.md
 ```
 
 ## Public / Private Boundary
@@ -141,7 +143,8 @@ Private:
 8. Add HMM-style regime detection + feature pipeline sample. Done.
 9. Add mini backtest orchestration sample. Done.
 10. Add experiment manifest / run log for reproducibility. Done.
-11. Connect repo to QuantSigma.ai, Medium, and LinkedIn Featured.
+11. Add Numerai public benchmark trail preparation. Done.
+12. Connect repo to QuantSigma.ai, Medium, and LinkedIn Featured.
 
 ## Local Commands
 
@@ -154,6 +157,7 @@ make purged-embargo-demo
 make regime-feature-demo
 make mini-backtest-demo
 make manifest-demo
+make numerai-demo
 make reload-demo
 make serve
 ```
@@ -161,7 +165,7 @@ make serve
 Current test coverage:
 
 ```text
-41 tests passing, including CVaR risk logic, drift monitoring, walk-forward validation, purged/embargoed validation, HMM-style regime features, mini backtest orchestration, experiment manifests, and a subprocess-backed uvicorn E2E test.
+48 tests passing, including CVaR risk logic, drift monitoring, walk-forward validation, purged/embargoed validation, HMM-style regime features, mini backtest orchestration, experiment manifests, Numerai submission-format checks, and a subprocess-backed uvicorn E2E test.
 ```
 
 Drift report demo:
@@ -198,6 +202,18 @@ Output:
 
 ```text
 docs/benchmarks/walk_forward_validation.md
+```
+
+Numerai benchmark trail demo:
+
+```text
+make numerai-demo
+```
+
+Output:
+
+```text
+docs/benchmarks/numerai_benchmark_trail.md
 ```
 
 Purged + embargoed validation demo:
