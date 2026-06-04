@@ -13,6 +13,7 @@ This project is not investment advice, a trading signal service, or a live tradi
 - Mini backtest orchestration that connects features, regimes, validation, and CVaR-style risk metrics
 - Reproducible experiment manifests / run logs for public artifacts
 - Numerai benchmark-trail preparation with submission format validation
+- RAG evaluation harness with golden-set metrics, retrieval checks, citation coverage, and answer-support scoring
 - Risk-aware model evaluation with CVaR / Expected Shortfall
 - Distributional RL patterns such as QR-DQN return quantiles
 - FastAPI model serving with model version visibility
@@ -92,6 +93,7 @@ agentic-quant-trading-python/
       mini_backtest_orchestration.md
       experiment_manifest.md
       numerai_benchmark_trail.md
+      rag_evaluation_harness.md
 ```
 
 ## Public / Private Boundary
@@ -144,7 +146,8 @@ Private:
 9. Add mini backtest orchestration sample. Done.
 10. Add experiment manifest / run log for reproducibility. Done.
 11. Add Numerai public benchmark trail preparation. Done.
-12. Connect repo to QuantSigma.ai, Medium, and LinkedIn Featured.
+12. Add deterministic RAG evaluation harness for LLM/RAG Evaluation roles. Done.
+13. Connect repo to QuantSigma.ai, Medium, and LinkedIn Featured.
 
 ## Local Commands
 
@@ -158,6 +161,7 @@ make regime-feature-demo
 make mini-backtest-demo
 make manifest-demo
 make numerai-demo
+make rag-eval-demo
 make reload-demo
 make serve
 ```
@@ -165,7 +169,7 @@ make serve
 Current test coverage:
 
 ```text
-48 tests passing, including CVaR risk logic, drift monitoring, walk-forward validation, purged/embargoed validation, HMM-style regime features, mini backtest orchestration, experiment manifests, Numerai submission-format checks, and a subprocess-backed uvicorn E2E test.
+52 tests passing, including CVaR risk logic, drift monitoring, walk-forward validation, purged/embargoed validation, HMM-style regime features, mini backtest orchestration, experiment manifests, Numerai submission-format checks, RAG evaluation harness checks, and a subprocess-backed uvicorn E2E test.
 ```
 
 Drift report demo:
@@ -214,6 +218,18 @@ Output:
 
 ```text
 docs/benchmarks/numerai_benchmark_trail.md
+```
+
+RAG evaluation harness demo:
+
+```text
+make rag-eval-demo
+```
+
+Output:
+
+```text
+docs/benchmarks/rag_evaluation_harness.md
 ```
 
 Purged + embargoed validation demo:
