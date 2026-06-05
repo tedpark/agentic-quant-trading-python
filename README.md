@@ -13,6 +13,7 @@ This project is not investment advice, a trading signal service, or a live tradi
 - Mini backtest orchestration that connects features, regimes, validation, and CVaR-style risk metrics
 - Reproducible experiment manifests / run logs for public artifacts
 - Trading experiment audit reports for validation, leakage, turnover, and risk checks
+- Tool-calling research cycle that runs approved backtest, manifest, audit, and report tools
 - Numerai benchmark-trail preparation with submission format validation
 - RAG evaluation harness with golden-set metrics, retrieval checks, citation coverage, and answer-support scoring
 - QuantSigma Research OS prototype for artifact ingestion, research graph extraction, cited answers, and hypothesis-to-experiment manifests
@@ -98,9 +99,12 @@ agentic-quant-trading-python/
       rag_evaluation_harness.md
       research_os_demo.md
       trading_experiment_audit.md
+      research_cycle_report.md
     product/
       quant_research_os_implementation.md
       what_is_quant_research_os.md
+      product_reality_check.md
+      tool_calling_research_agent.md
 ```
 
 ## Public / Private Boundary
@@ -156,7 +160,8 @@ Private:
 12. Add deterministic RAG evaluation harness for LLM/RAG Evaluation roles. Done.
 13. Add QuantSigma Research OS prototype for cited quant research answers and experiment manifest planning. Done.
 14. Add trading experiment audit layer for validation, leakage, turnover, and risk review. Done.
-15. Connect repo to QuantSigma.ai, Medium, and LinkedIn Featured.
+15. Add allowlisted tool-calling research cycle runner. Done.
+16. Connect repo to QuantSigma.ai, Medium, and LinkedIn Featured.
 
 ## Local Commands
 
@@ -173,6 +178,7 @@ make numerai-demo
 make rag-eval-demo
 make research-os-demo
 make experiment-audit-demo
+make research-cycle-demo
 make reload-demo
 make serve
 ```
@@ -180,7 +186,7 @@ make serve
 Current test coverage:
 
 ```text
-63 tests passing, including CVaR risk logic, drift monitoring, walk-forward validation, purged/embargoed validation, HMM-style regime features, mini backtest orchestration, experiment manifests, trading experiment audit checks, Numerai submission-format checks, RAG evaluation harness checks, Research OS checks, and a subprocess-backed uvicorn E2E test.
+66 tests passing, including CVaR risk logic, drift monitoring, walk-forward validation, purged/embargoed validation, HMM-style regime features, mini backtest orchestration, experiment manifests, trading experiment audit checks, tool-calling research cycle checks, Numerai submission-format checks, RAG evaluation harness checks, Research OS checks, and a subprocess-backed uvicorn E2E test.
 ```
 
 Drift report demo:
@@ -253,6 +259,18 @@ Output:
 
 ```text
 docs/benchmarks/trading_experiment_audit.md
+```
+
+Tool-calling research cycle demo:
+
+```text
+make research-cycle-demo
+```
+
+Output:
+
+```text
+docs/benchmarks/research_cycle_report.md
 ```
 
 RAG evaluation harness demo:

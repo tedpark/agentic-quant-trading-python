@@ -53,11 +53,24 @@ trading system backtest folds + experiment manifest
   -> produce reject / review_required / paper_trade_candidate decision
 ```
 
+And the agent can run a complete research cycle through allowlisted tools:
+
+```text
+idea
+  -> plan_experiment
+  -> build_experiment_config
+  -> run_mini_backtest
+  -> build_manifest
+  -> audit_experiment
+  -> write_report
+```
+
 Runnable command:
 
 ```bash
 make research-os-demo
 make experiment-audit-demo
+make research-cycle-demo
 ```
 
 Generated output:
@@ -65,6 +78,7 @@ Generated output:
 ```text
 docs/benchmarks/research_os_demo.md
 docs/benchmarks/trading_experiment_audit.md
+docs/benchmarks/research_cycle_report.md
 ```
 
 ## What It Does Not Do

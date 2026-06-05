@@ -9,6 +9,7 @@ The first useful product is a tested experiment promotion layer:
 ```text
 research artifacts -> cited answers -> experiment plans -> validation reports
 trading experiment outputs -> promotion gate -> paper-trading review decision
+trading idea -> allowlisted tool calls -> research cycle report
 ```
 
 This matters because financial ML credibility comes from leakage control,
@@ -145,11 +146,24 @@ Audit output:
 docs/benchmarks/trading_experiment_audit.md
 ```
 
+Research cycle demo:
+
+```bash
+make research-cycle-demo
+```
+
+Cycle output:
+
+```text
+docs/benchmarks/research_cycle_report.md
+```
+
 Concept document:
 
 ```text
 docs/product/what_is_quant_research_os.md
 docs/product/product_reality_check.md
+docs/product/tool_calling_research_agent.md
 ```
 
 ## Next Build Steps

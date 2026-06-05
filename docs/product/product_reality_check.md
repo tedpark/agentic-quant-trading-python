@@ -241,7 +241,30 @@ and the promotion gate can run:
 quant-gate review experiment_run.json
 ```
 
-### Step 4: UI
+### Step 4: Tool-Calling Research Runner
+
+Do not let the chatbot run arbitrary shell commands.
+
+Use an allowlisted runner:
+
+```text
+plan_experiment
+build_experiment_config
+run_mini_backtest
+build_manifest
+audit_experiment
+write_report
+```
+
+The current demo command is:
+
+```bash
+make research-cycle-demo
+```
+
+This is the first practical version of a chat-driven research operator.
+
+### Step 5: UI
 
 Do not build a chatbot first.
 
@@ -268,6 +291,8 @@ QuantSigma Experiment Promotion Gate
 
 The Research OS can remain the broader umbrella, but the first serious product
 should be the promotion gate.
+
+The agent layer should call approved research tools, not arbitrary code.
 
 Interview / portfolio message:
 

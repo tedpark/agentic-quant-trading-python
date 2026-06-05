@@ -1,4 +1,4 @@
-.PHONY: test serve reload-demo drift-demo cvar-demo walk-forward-demo purged-embargo-demo regime-feature-demo mini-backtest-demo manifest-demo numerai-demo rag-eval-demo research-os-demo experiment-audit-demo
+.PHONY: test serve reload-demo drift-demo cvar-demo walk-forward-demo purged-embargo-demo regime-feature-demo mini-backtest-demo manifest-demo numerai-demo rag-eval-demo research-os-demo experiment-audit-demo research-cycle-demo
 
 test:
 	python -m pytest
@@ -41,3 +41,6 @@ research-os-demo:
 
 experiment-audit-demo:
 	PYTHONPATH=src python -m agentic_quant.research_os.demo_audit --output docs/benchmarks/trading_experiment_audit.md
+
+research-cycle-demo:
+	PYTHONPATH=src python -m agentic_quant.research_os.demo_cycle --output docs/benchmarks/research_cycle_report.md
