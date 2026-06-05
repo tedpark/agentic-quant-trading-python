@@ -1,4 +1,4 @@
-.PHONY: test serve reload-demo drift-demo cvar-demo walk-forward-demo purged-embargo-demo regime-feature-demo mini-backtest-demo manifest-demo numerai-demo rag-eval-demo research-os-demo experiment-audit-demo research-cycle-demo
+.PHONY: test serve reload-demo drift-demo cvar-demo walk-forward-demo purged-embargo-demo regime-feature-demo mini-backtest-demo manifest-demo numerai-demo rag-eval-demo research-os-demo experiment-audit-demo research-cycle-demo contract-review-demo
 
 test:
 	python -m pytest
@@ -44,3 +44,6 @@ experiment-audit-demo:
 
 research-cycle-demo:
 	PYTHONPATH=src python -m agentic_quant.research_os.demo_cycle --output docs/benchmarks/research_cycle_report.md
+
+contract-review-demo:
+	PYTHONPATH=src python -m agentic_quant.research_os.demo_contract_review --input docs/benchmarks/experiment_run_contract.json --output docs/benchmarks/contract_promotion_review.md

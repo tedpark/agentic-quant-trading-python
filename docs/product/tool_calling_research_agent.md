@@ -74,6 +74,7 @@ The current demo implements this as:
 
 ```bash
 make research-cycle-demo
+make contract-review-demo
 ```
 
 Output:
@@ -82,6 +83,7 @@ Output:
 docs/benchmarks/research_cycle_report.md
 docs/benchmarks/experiment_run_contract.json
 docs/benchmarks/research_workflow_state.json
+docs/benchmarks/contract_promotion_review.md
 ```
 
 ## Safety Boundary
@@ -135,11 +137,13 @@ Implemented files:
 src/agentic_quant/research_os/cycle.py
 src/agentic_quant/research_os/contract.py
 src/agentic_quant/research_os/demo_cycle.py
+src/agentic_quant/research_os/demo_contract_review.py
 tests/test_research_cycle.py
 tests/test_experiment_run_contract.py
 docs/benchmarks/research_cycle_report.md
 docs/benchmarks/experiment_run_contract.json
 docs/benchmarks/research_workflow_state.json
+docs/benchmarks/contract_promotion_review.md
 ```
 
 Implemented safeguards:
@@ -152,6 +156,8 @@ Implemented safeguards:
   contract that downstream promotion gates can validate.
 - `validate_experiment_run_contract()` rejects live-trading contracts,
   non-time-ordered folds, missing artifacts, and weak public boundaries.
+- `audit_experiment_run_contract()` reviews an external `experiment_run.v1`
+  file without needing internal Python manifest or fold objects.
 - `ResearchWorkflowState` records graph-style state transitions so the workflow
   can later move to LangGraph without changing product semantics.
 - The generated report records the tool-call trace.
@@ -183,7 +189,7 @@ docs/benchmarks/experiment_run_contract.json
 The trading system should export the same schema, and the agent should run:
 
 ```bash
-quant-gate review experiment_run.json
+make contract-review-demo
 ```
 
 That is the bridge from demo to real trading-system integration.

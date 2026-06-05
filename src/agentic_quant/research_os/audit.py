@@ -5,6 +5,7 @@ from typing import Mapping, Sequence
 
 from agentic_quant.experiments.manifest import ExperimentManifest
 from agentic_quant.experiments.orchestration import ExperimentFoldResult
+from agentic_quant.research_os.contract import ExperimentRunContract, validate_experiment_run_contract
 
 
 @dataclass(frozen=True)
@@ -92,6 +93,33 @@ def audit_experiment(
     )
 
 
+def audit_experiment_run_contract(
+    contract: ExperimentRunContract,
+    *,
+    policy: PromotionPolicy = PromotionPolicy(),
+) -> ExperimentAuditReport:
+    validated = validate_experiment_run_contract(contract)
+    findings = [
+        *_audit_contract_completeness(validated, policy=policy),
+        *_audit_contract_time_ordering(validated),
+        *_audit_contract_validation_behavior(validated, policy=policy),
+        *_audit_contract_risk_metrics(validated, policy=policy),
+        *_audit_contract_boundary(validated),
+    ]
+    return ExperimentAuditReport(
+        run_id=validated.run_id,
+        decision=_decision(findings),
+        findings=tuple(findings),
+        checked_items=(
+            "experiment_run.v1 contract completeness",
+            "time-ordered fold structure",
+            "validation/test separation",
+            "risk metrics and tail behavior",
+            "public/private operational boundary",
+        ),
+    )
+
+
 def _audit_manifest(manifest: ExperimentManifest, *, policy: PromotionPolicy) -> tuple[AuditFinding, ...]:
     findings: list[AuditFinding] = []
     if manifest.fold_count < policy.min_folds:
@@ -151,6 +179,165 @@ def _audit_manifest(manifest: ExperimentManifest, *, policy: PromotionPolicy) ->
             )
         )
     return tuple(findings)
+
+
+def _audit_contract_completeness(
+    contract: ExperimentRunContract, *, policy: PromotionPolicy
+) -> tuple[AuditFinding, ...]:
+    findings: list[AuditFinding] = []
+    if len(contract.folds) < policy.min_folds:
+        findings.append(
+            _fail(
+                "contract",
+                f"Contract has {len(contract.folds)} folds, below policy minimum {policy.min_folds}.",
+                "Export enough walk-forward folds before promotion review.",
+            )
+        )
+    else:
+        findings.append(_pass("contract", "Contract satisfies minimum fold count.", "Keep fold count stable."))
+
+    test_observations = sum(fold.test_metrics.observations for fold in contract.folds)
+    if test_observations < policy.min_test_observations:
+        findings.append(
+            _fail(
+                "contract",
+                f"Contract has {test_observations} test observations, below policy minimum {policy.min_test_observations}.",
+                "Increase test-window coverage before promotion review.",
+            )
+        )
+    else:
+        findings.append(_pass("contract", "Contract satisfies minimum test observations.", "Keep sample count visible."))
+
+    missing = [name for name in policy.required_artifacts if name not in contract.artifacts]
+    if missing:
+        findings.append(
+            _warn(
+                "contract",
+                f"Contract is missing expected artifacts: {', '.join(missing)}.",
+                "Export the backtest, manifest, and audit artifact references.",
+            )
+        )
+    else:
+        findings.append(_pass("contract", "Contract includes expected report artifacts.", "Keep artifact paths stable."))
+    return tuple(findings)
+
+
+def _audit_contract_time_ordering(contract: ExperimentRunContract) -> tuple[AuditFinding, ...]:
+    bad = [
+        fold.fold
+        for fold in contract.folds
+        if not (fold.train_range[1] < fold.validation_range[0] and fold.validation_range[1] < fold.test_range[0])
+    ]
+    if bad:
+        return (
+            _fail(
+                "validation",
+                f"Contract folds are not strictly time ordered: {bad}.",
+                "Export train < validation < test windows before promotion review.",
+            ),
+        )
+    return (_pass("validation", "All contract folds are strictly time ordered.", "Keep random splits out of financial ML."),)
+
+
+def _audit_contract_validation_behavior(
+    contract: ExperimentRunContract, *, policy: PromotionPolicy
+) -> tuple[AuditFinding, ...]:
+    findings: list[AuditFinding] = []
+    selected = {fold.selected_threshold for fold in contract.folds}
+    if len(selected) <= 1:
+        findings.append(
+            _warn(
+                "validation",
+                "The same threshold was selected in every contract fold.",
+                "Check whether the validation grid is too narrow or the policy is insensitive.",
+            )
+        )
+    else:
+        findings.append(_pass("validation", "Threshold selection varies across contract folds.", "Track fold-level choices."))
+
+    excessive_gaps = [
+        fold.fold
+        for fold in contract.folds
+        if fold.validation_metrics.mean_return - fold.test_metrics.mean_return > policy.max_validation_test_gap
+    ]
+    if excessive_gaps:
+        findings.append(
+            _warn(
+                "generalization",
+                f"Validation-to-test degradation exceeded policy in contract folds: {excessive_gaps}.",
+                "Inspect overfitting, threshold search width, and regime shift effects.",
+            )
+        )
+    else:
+        findings.append(
+            _pass(
+                "generalization",
+                "Contract validation/test behavior is not uniformly optimistic.",
+                "Still compare fold-level degradation before promotion.",
+            )
+        )
+    return tuple(findings)
+
+
+def _audit_contract_risk_metrics(contract: ExperimentRunContract, *, policy: PromotionPolicy) -> tuple[AuditFinding, ...]:
+    findings: list[AuditFinding] = []
+    mean_cvar = sum(fold.test_metrics.cvar * fold.test_metrics.observations for fold in contract.folds) / sum(
+        fold.test_metrics.observations for fold in contract.folds
+    )
+    if mean_cvar < 0:
+        findings.append(_pass("risk", "Contract records CVaR as a left-tail loss metric.", "Keep CVaR in the promotion gate."))
+    else:
+        findings.append(
+            _warn(
+                "risk",
+                "Contract mean CVaR is non-negative, which may indicate no active tail-loss sample or a metric issue.",
+                "Inspect return distribution and CVaR calculation before trusting the run.",
+            )
+        )
+
+    high_turnover = [fold.fold for fold in contract.folds if fold.test_metrics.turnover > policy.max_turnover]
+    if high_turnover:
+        findings.append(
+            _warn(
+                "cost",
+                f"High test turnover detected in contract folds: {high_turnover}.",
+                "Stress transaction costs and slippage before considering deployment.",
+            )
+        )
+    else:
+        findings.append(_pass("cost", "No contract fold exceeded the high-turnover threshold.", "Keep turnover in every report."))
+
+    weak_sharpe = [fold.fold for fold in contract.folds if fold.test_metrics.sharpe <= policy.min_test_sharpe]
+    if weak_sharpe:
+        findings.append(
+            _warn(
+                "risk",
+                f"Non-positive test Sharpe detected in contract folds: {weak_sharpe}.",
+                "Do not promote the strategy without explaining failed folds.",
+            )
+        )
+    else:
+        findings.append(_pass("risk", "All contract folds have positive test Sharpe.", "Confirm this survives cost stress."))
+    return tuple(findings)
+
+
+def _audit_contract_boundary(contract: ExperimentRunContract) -> tuple[AuditFinding, ...]:
+    boundary = " ".join(contract.public_boundary).lower()
+    if not contract.allow_live_trading and "no live execution" in boundary and "no broker" in boundary:
+        return (
+            _pass(
+                "boundary",
+                "Contract explicitly excludes live execution and broker access.",
+                "Keep public contracts separate from private strategy operations.",
+            ),
+        )
+    return (
+        _warn(
+            "boundary",
+            "Contract public/private boundary is not explicit enough.",
+            "State that public artifacts do not include live execution, broker data, or private thresholds.",
+        ),
+    )
 
 
 def _audit_time_ordering(folds: Sequence[ExperimentFoldResult]) -> tuple[AuditFinding, ...]:

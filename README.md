@@ -102,6 +102,7 @@ agentic-quant-trading-python/
       research_cycle_report.md
       experiment_run_contract.json
       research_workflow_state.json
+      contract_promotion_review.md
     product/
       quant_research_os_implementation.md
       what_is_quant_research_os.md
@@ -165,7 +166,8 @@ Private:
 15. Add allowlisted tool-calling research cycle runner. Done.
 16. Add stable `experiment_run.v1` contract export and validation. Done.
 17. Add graph-style workflow state snapshot for future LangGraph orchestration. Done.
-18. Connect repo to QuantSigma.ai, Medium, and LinkedIn Featured.
+18. Add contract-only promotion review for external trading-system adapters. Done.
+19. Connect repo to QuantSigma.ai, Medium, and LinkedIn Featured.
 
 ## Local Commands
 
@@ -183,6 +185,7 @@ make rag-eval-demo
 make research-os-demo
 make experiment-audit-demo
 make research-cycle-demo
+make contract-review-demo
 make reload-demo
 make serve
 ```
@@ -190,7 +193,7 @@ make serve
 Current test coverage:
 
 ```text
-72 tests passing, including CVaR risk logic, drift monitoring, walk-forward validation, purged/embargoed validation, HMM-style regime features, mini backtest orchestration, experiment manifests, trading experiment audit checks, tool-calling research cycle checks, config validation checks, workflow state checks, experiment_run contract checks, Numerai submission-format checks, RAG evaluation harness checks, Research OS checks, and a subprocess-backed uvicorn E2E test.
+74 tests passing, including CVaR risk logic, drift monitoring, walk-forward validation, purged/embargoed validation, HMM-style regime features, mini backtest orchestration, experiment manifests, trading experiment audit checks, tool-calling research cycle checks, config validation checks, workflow state checks, experiment_run contract checks, contract-only promotion review checks, Numerai submission-format checks, RAG evaluation harness checks, Research OS checks, and a subprocess-backed uvicorn E2E test.
 ```
 
 Drift report demo:
@@ -277,6 +280,18 @@ Output:
 docs/benchmarks/research_cycle_report.md
 docs/benchmarks/experiment_run_contract.json
 docs/benchmarks/research_workflow_state.json
+```
+
+Contract-only promotion review demo:
+
+```text
+make contract-review-demo
+```
+
+Output:
+
+```text
+docs/benchmarks/contract_promotion_review.md
 ```
 
 RAG evaluation harness demo:

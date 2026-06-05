@@ -9,6 +9,7 @@ from agentic_quant.research_os.contract import (
     validate_experiment_run_contract,
 )
 from agentic_quant.research_os.cycle import run_research_cycle
+from agentic_quant.research_os.audit import PromotionPolicy, audit_experiment_run_contract
 
 
 def test_contract_round_trips_from_research_cycle() -> None:
@@ -83,3 +84,24 @@ def test_contract_builder_uses_manifest_and_fold_outputs() -> None:
     assert contract.parameters["strategy_name"] == report.config.strategy_name
     assert contract.artifacts["backtest_report"] == "docs/benchmarks/mini_backtest_orchestration.md"
     assert contract.folds[0].test_metrics.observations > 0
+
+
+def test_contract_can_be_reviewed_without_internal_manifest_objects() -> None:
+    report = run_research_cycle("HMM regime features improve pair spread entries")
+    contract = parse_experiment_run_contract(report.contract.to_json())
+
+    review = audit_experiment_run_contract(contract)
+
+    assert review.run_id == contract.run_id
+    assert review.decision in {"paper_trade_candidate", "review_required"}
+    assert any(finding.category == "contract" for finding in review.findings)
+    assert "Trading Experiment Audit Report" in review.to_markdown()
+
+
+def test_contract_review_rejects_under_strict_policy() -> None:
+    report = run_research_cycle("HMM regime features improve pair spread entries")
+
+    review = audit_experiment_run_contract(report.contract, policy=PromotionPolicy(min_folds=999))
+
+    assert review.decision == "reject"
+    assert any(finding.severity == "fail" for finding in review.findings)

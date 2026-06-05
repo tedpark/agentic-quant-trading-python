@@ -1,4 +1,10 @@
-from agentic_quant.research_os.audit import AuditFinding, ExperimentAuditReport, PromotionPolicy, audit_experiment
+from agentic_quant.research_os.audit import (
+    AuditFinding,
+    ExperimentAuditReport,
+    PromotionPolicy,
+    audit_experiment,
+    audit_experiment_run_contract,
+)
 from agentic_quant.research_os.copilot import answer_question
 from agentic_quant.research_os.contract import (
     ExperimentRunContract,
@@ -48,6 +54,7 @@ __all__ = [
     "FoldMetricsContract",
     "answer_question",
     "audit_experiment",
+    "audit_experiment_run_contract",
     "build_research_graph",
     "build_research_index",
     "build_experiment_run_contract",

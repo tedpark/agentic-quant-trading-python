@@ -75,6 +75,7 @@ Runnable command:
 make research-os-demo
 make experiment-audit-demo
 make research-cycle-demo
+make contract-review-demo
 ```
 
 Generated output:
@@ -85,6 +86,7 @@ docs/benchmarks/trading_experiment_audit.md
 docs/benchmarks/research_cycle_report.md
 docs/benchmarks/experiment_run_contract.json
 docs/benchmarks/research_workflow_state.json
+docs/benchmarks/contract_promotion_review.md
 ```
 
 ## What It Does Not Do

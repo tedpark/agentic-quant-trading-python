@@ -161,6 +161,18 @@ docs/benchmarks/experiment_run_contract.json
 docs/benchmarks/research_workflow_state.json
 ```
 
+Contract-only promotion review:
+
+```bash
+make contract-review-demo
+```
+
+Contract review output:
+
+```text
+docs/benchmarks/contract_promotion_review.md
+```
+
 The research cycle now has three explicit layers:
 
 ```text
@@ -168,6 +180,7 @@ build_experiment_config()
   -> validate_experiment_config()
   -> runner registry dispatch
   -> experiment_run.v1 contract export
+  -> contract-only promotion review
   -> workflow state snapshot
 ```
 
