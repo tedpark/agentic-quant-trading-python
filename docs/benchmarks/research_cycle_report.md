@@ -11,6 +11,7 @@ builds a manifest, and applies the promotion gate.
 - strategy: `pair_mean_reversion_regime_filter`
 - promotion decision: `review_required`
 - live trading allowed: `False`
+- completed steps: 6
 
 ## Tool Calls
 
@@ -320,6 +321,28 @@ builds a manifest, and applies the promotion gate.
   "runner": "mini_backtest",
   "schema_version": "experiment_run.v1",
   "strategy_name": "pair_mean_reversion_regime_filter"
+}
+```
+
+## Workflow State
+
+```json
+{
+  "audit_decision": "review_required",
+  "completed_steps": [
+    "plan_experiment",
+    "validate_experiment_config",
+    "run_registered_runner",
+    "build_manifest",
+    "audit_experiment",
+    "validate_experiment_run_contract"
+  ],
+  "config_validated": true,
+  "contract_validated": true,
+  "idea": "HMM sideways regime improves mean-reversion entries for cointegrated pairs",
+  "manifest_run_id": "6e729a7f9eda",
+  "run_id": "9ff3bb850f5f",
+  "runner_dispatched": true
 }
 ```
 

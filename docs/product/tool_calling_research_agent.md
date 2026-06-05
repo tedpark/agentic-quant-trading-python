@@ -81,6 +81,7 @@ Output:
 ```text
 docs/benchmarks/research_cycle_report.md
 docs/benchmarks/experiment_run_contract.json
+docs/benchmarks/research_workflow_state.json
 ```
 
 ## Safety Boundary
@@ -138,6 +139,7 @@ tests/test_research_cycle.py
 tests/test_experiment_run_contract.py
 docs/benchmarks/research_cycle_report.md
 docs/benchmarks/experiment_run_contract.json
+docs/benchmarks/research_workflow_state.json
 ```
 
 Implemented safeguards:
@@ -150,6 +152,8 @@ Implemented safeguards:
   contract that downstream promotion gates can validate.
 - `validate_experiment_run_contract()` rejects live-trading contracts,
   non-time-ordered folds, missing artifacts, and weak public boundaries.
+- `ResearchWorkflowState` records graph-style state transitions so the workflow
+  can later move to LangGraph without changing product semantics.
 - The generated report records the tool-call trace.
 
 The generated report records:
@@ -160,6 +164,7 @@ The generated report records:
 - fold-level backtest summary
 - manifest snapshot
 - promotion-gate decision
+- workflow state snapshot
 
 ## Stable Contract
 
@@ -182,3 +187,28 @@ quant-gate review experiment_run.json
 ```
 
 That is the bridge from demo to real trading-system integration.
+
+## LangGraph Readiness
+
+The current implementation is plain Python, but the state shape already maps to
+LangGraph-style nodes:
+
+```text
+idea
+  -> plan_experiment
+  -> validate_experiment_config
+  -> run_registered_runner
+  -> build_manifest
+  -> audit_experiment
+  -> validate_experiment_run_contract
+```
+
+The exported state file is:
+
+```text
+docs/benchmarks/research_workflow_state.json
+```
+
+This is useful because the workflow can later add checkpointing,
+human-in-the-loop approval, and resume behavior without changing the core
+trading research contract.

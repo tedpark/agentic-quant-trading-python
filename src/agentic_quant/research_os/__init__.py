@@ -11,6 +11,7 @@ from agentic_quant.research_os.contract import (
 from agentic_quant.research_os.cycle import (
     ResearchCycleConfig,
     ResearchCycleReport,
+    ResearchWorkflowState,
     run_research_cycle,
     validate_experiment_config,
 )
@@ -41,6 +42,7 @@ __all__ = [
     "PromotionPolicy",
     "ResearchCycleConfig",
     "ResearchCycleReport",
+    "ResearchWorkflowState",
     "ExperimentRunContract",
     "FoldContract",
     "FoldMetricsContract",

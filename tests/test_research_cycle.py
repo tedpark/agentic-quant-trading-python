@@ -21,8 +21,21 @@ def test_research_cycle_runs_allowlisted_tools_and_outputs_report() -> None:
         "write_report",
     }
     assert report.audit.decision in {"paper_trade_candidate", "review_required"}
+    assert report.state.config_validated is True
+    assert report.state.runner_dispatched is True
+    assert report.state.contract_validated is True
+    assert report.state.audit_decision == report.audit.decision
+    assert report.state.completed_steps == (
+        "plan_experiment",
+        "validate_experiment_config",
+        "run_registered_runner",
+        "build_manifest",
+        "audit_experiment",
+        "validate_experiment_run_contract",
+    )
     assert "QuantSigma Lab Agent Research Cycle" in report.to_markdown()
     assert "does not execute arbitrary shell commands" in report.to_markdown()
+    assert "Workflow State" in report.to_markdown()
 
 
 def test_research_cycle_can_reject_under_strict_policy() -> None:

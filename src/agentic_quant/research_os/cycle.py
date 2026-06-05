@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from hashlib import sha256
 from json import dumps
 from typing import Callable, Mapping, Sequence
@@ -80,6 +80,27 @@ class ResearchToolCall:
 
 
 @dataclass(frozen=True)
+class ResearchWorkflowState:
+    idea: str
+    run_id: str | None = None
+    config_validated: bool = False
+    runner_dispatched: bool = False
+    manifest_run_id: str | None = None
+    contract_validated: bool = False
+    audit_decision: str | None = None
+    completed_steps: tuple[str, ...] = ()
+
+    def with_step(self, step: str, **updates: object) -> "ResearchWorkflowState":
+        payload = asdict(self)
+        payload.update(updates)
+        payload["completed_steps"] = (*self.completed_steps, step)
+        return ResearchWorkflowState(**payload)
+
+    def to_json(self) -> str:
+        return dumps(asdict(self), indent=2, sort_keys=True)
+
+
+@dataclass(frozen=True)
 class ResearchCycleReport:
     config: ResearchCycleConfig
     plan: ExperimentPlan
@@ -88,6 +109,7 @@ class ResearchCycleReport:
     contract: ExperimentRunContract
     audit: ExperimentAuditReport
     tool_calls: tuple[ResearchToolCall, ...]
+    state: ResearchWorkflowState
 
     def to_markdown(self) -> str:
         lines = [
@@ -104,6 +126,7 @@ class ResearchCycleReport:
             f"- strategy: `{self.config.strategy_name}`",
             f"- promotion decision: `{self.audit.decision}`",
             f"- live trading allowed: `{self.config.allow_live_trading}`",
+            f"- completed steps: {len(self.state.completed_steps)}",
             "",
             "## Tool Calls",
             "",
@@ -151,6 +174,12 @@ class ResearchCycleReport:
                 "",
                 "```json",
                 self.contract.to_json(),
+                "```",
+                "",
+                "## Workflow State",
+                "",
+                "```json",
+                self.state.to_json(),
                 "```",
                 "",
                 self.audit.to_markdown().rstrip(),
@@ -221,11 +250,14 @@ def validate_experiment_config(config: ResearchCycleConfig) -> ResearchCycleConf
 
 def run_research_cycle(idea: str, *, policy: PromotionPolicy = PromotionPolicy()) -> ResearchCycleReport:
     tool_calls: list[ResearchToolCall] = []
+    state = ResearchWorkflowState(idea=idea)
 
     plan = plan_experiment(idea)
     tool_calls.append(_tool_call("plan_experiment", {"idea": idea}, "created leakage-aware experiment plan"))
+    state = state.with_step("plan_experiment")
 
     config = validate_experiment_config(build_experiment_config(idea))
+    state = state.with_step("validate_experiment_config", run_id=config.run_id, config_validated=True)
     tool_calls.append(
         _tool_call(
             "build_experiment_config",
@@ -235,6 +267,7 @@ def run_research_cycle(idea: str, *, policy: PromotionPolicy = PromotionPolicy()
     )
 
     folds = _run_registered_runner(config)
+    state = state.with_step("run_registered_runner", runner_dispatched=True)
     tool_calls.append(_tool_call("run_mini_backtest", {"folds": len(folds)}, "ran walk-forward mini backtest"))
 
     manifest = build_mini_backtest_manifest(
@@ -258,11 +291,14 @@ def run_research_cycle(idea: str, *, policy: PromotionPolicy = PromotionPolicy()
         name=f"research-cycle-{config.strategy_name}",
         data_source=config.data_source,
     )
+    state = state.with_step("build_manifest", manifest_run_id=manifest.run_id)
     tool_calls.append(_tool_call("build_manifest", {"manifest_run_id": manifest.run_id}, "built experiment manifest"))
 
     audit = audit_experiment(manifest, folds, policy=policy)
+    state = state.with_step("audit_experiment", audit_decision=audit.decision)
     tool_calls.append(_tool_call("audit_experiment", {"decision": audit.decision}, "applied promotion gate"))
     contract = validate_experiment_run_contract(build_experiment_run_contract(config, manifest, folds))
+    state = state.with_step("validate_experiment_run_contract", contract_validated=True)
     tool_calls.append(
         _tool_call(
             "write_report",
@@ -282,6 +318,7 @@ def run_research_cycle(idea: str, *, policy: PromotionPolicy = PromotionPolicy()
         contract=contract,
         audit=audit,
         tool_calls=tuple(tool_calls),
+        state=state,
     )
 
 

@@ -158,6 +158,7 @@ Cycle output:
 ```text
 docs/benchmarks/research_cycle_report.md
 docs/benchmarks/experiment_run_contract.json
+docs/benchmarks/research_workflow_state.json
 ```
 
 The research cycle now has three explicit layers:
@@ -167,6 +168,7 @@ build_experiment_config()
   -> validate_experiment_config()
   -> runner registry dispatch
   -> experiment_run.v1 contract export
+  -> workflow state snapshot
 ```
 
 The config is dynamic, but execution is constrained by an allowlist. This keeps
