@@ -14,6 +14,7 @@ This project is not investment advice, a trading signal service, or a live tradi
 - Reproducible experiment manifests / run logs for public artifacts
 - Numerai benchmark-trail preparation with submission format validation
 - RAG evaluation harness with golden-set metrics, retrieval checks, citation coverage, and answer-support scoring
+- QuantSigma Research OS prototype for artifact ingestion, cited answers, and hypothesis-to-experiment planning
 - Risk-aware model evaluation with CVaR / Expected Shortfall
 - Distributional RL patterns such as QR-DQN return quantiles
 - FastAPI model serving with model version visibility
@@ -94,6 +95,9 @@ agentic-quant-trading-python/
       experiment_manifest.md
       numerai_benchmark_trail.md
       rag_evaluation_harness.md
+      research_os_demo.md
+    product/
+      quant_research_os_implementation.md
 ```
 
 ## Public / Private Boundary
@@ -147,7 +151,8 @@ Private:
 10. Add experiment manifest / run log for reproducibility. Done.
 11. Add Numerai public benchmark trail preparation. Done.
 12. Add deterministic RAG evaluation harness for LLM/RAG Evaluation roles. Done.
-13. Connect repo to QuantSigma.ai, Medium, and LinkedIn Featured.
+13. Add QuantSigma Research OS prototype for cited quant research answers and experiment planning. Done.
+14. Connect repo to QuantSigma.ai, Medium, and LinkedIn Featured.
 
 ## Local Commands
 
@@ -162,6 +167,7 @@ make mini-backtest-demo
 make manifest-demo
 make numerai-demo
 make rag-eval-demo
+make research-os-demo
 make reload-demo
 make serve
 ```
@@ -218,6 +224,18 @@ Output:
 
 ```text
 docs/benchmarks/numerai_benchmark_trail.md
+```
+
+Research OS demo:
+
+```text
+make research-os-demo
+```
+
+Output:
+
+```text
+docs/benchmarks/research_os_demo.md
 ```
 
 RAG evaluation harness demo:

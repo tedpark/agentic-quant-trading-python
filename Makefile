@@ -1,4 +1,4 @@
-.PHONY: test serve reload-demo drift-demo cvar-demo walk-forward-demo purged-embargo-demo regime-feature-demo mini-backtest-demo manifest-demo numerai-demo rag-eval-demo
+.PHONY: test serve reload-demo drift-demo cvar-demo walk-forward-demo purged-embargo-demo regime-feature-demo mini-backtest-demo manifest-demo numerai-demo rag-eval-demo research-os-demo
 
 test:
 	python -m pytest
@@ -35,3 +35,6 @@ numerai-demo:
 
 rag-eval-demo:
 	PYTHONPATH=src python -m agentic_quant.llm_eval.demo_rag_eval --output docs/benchmarks/rag_evaluation_harness.md
+
+research-os-demo:
+	PYTHONPATH=src python -m agentic_quant.research_os.demo_research_os --output docs/benchmarks/research_os_demo.md
