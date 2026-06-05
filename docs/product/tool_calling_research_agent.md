@@ -20,6 +20,9 @@ The model should decide which approved tool to call and with which structured
 arguments. The application code should execute the tool, validate the result,
 and record the tool call.
 
+The config is dynamic, but the schema is fixed. The agent can create a config
+draft, but the runner only executes it after validation.
+
 ## What Not To Build
 
 Do not start with:
@@ -45,6 +48,27 @@ build_manifest
 audit_experiment
 write_report
 ```
+
+The config carries a runner id and parameters:
+
+```json
+{
+  "runner": "mini_backtest",
+  "strategy_name": "pair_mean_reversion_regime_filter",
+  "data_source": "synthetic_market_bars",
+  "allow_live_trading": false
+}
+```
+
+The runner id maps to code through a registry:
+
+```text
+mini_backtest -> run_mini_experiment(...)
+```
+
+If the config requests an unregistered runner such as `shell`, or sets
+`allow_live_trading` to `true`, validation rejects it before any research code
+runs.
 
 The current demo implements this as:
 
@@ -111,6 +135,14 @@ src/agentic_quant/research_os/demo_cycle.py
 tests/test_research_cycle.py
 docs/benchmarks/research_cycle_report.md
 ```
+
+Implemented safeguards:
+
+- `build_experiment_config()` creates a dynamic config from an idea.
+- `validate_experiment_config()` checks runner, strategy, data source, safety,
+  window sizes, thresholds, and transaction cost.
+- `_runner_registry()` maps approved runner ids to implementation functions.
+- The generated report records the tool-call trace.
 
 The generated report records:
 

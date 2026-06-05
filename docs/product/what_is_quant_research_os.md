@@ -65,6 +65,10 @@ idea
   -> write_report
 ```
 
+The config is generated automatically from the idea, then validated before
+execution. A config can choose an approved runner such as `mini_backtest`, but it
+cannot request arbitrary shell execution or live trading.
+
 Runnable command:
 
 ```bash

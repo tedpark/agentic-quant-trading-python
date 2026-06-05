@@ -13,7 +13,7 @@ This project is not investment advice, a trading signal service, or a live tradi
 - Mini backtest orchestration that connects features, regimes, validation, and CVaR-style risk metrics
 - Reproducible experiment manifests / run logs for public artifacts
 - Trading experiment audit reports for validation, leakage, turnover, and risk checks
-- Tool-calling research cycle that runs approved backtest, manifest, audit, and report tools
+- Tool-calling research cycle with dynamic config generation, validation, runner dispatch, manifest, audit, and report tools
 - Numerai benchmark-trail preparation with submission format validation
 - RAG evaluation harness with golden-set metrics, retrieval checks, citation coverage, and answer-support scoring
 - QuantSigma Research OS prototype for artifact ingestion, research graph extraction, cited answers, and hypothesis-to-experiment manifests
@@ -186,7 +186,7 @@ make serve
 Current test coverage:
 
 ```text
-66 tests passing, including CVaR risk logic, drift monitoring, walk-forward validation, purged/embargoed validation, HMM-style regime features, mini backtest orchestration, experiment manifests, trading experiment audit checks, tool-calling research cycle checks, Numerai submission-format checks, RAG evaluation harness checks, Research OS checks, and a subprocess-backed uvicorn E2E test.
+68 tests passing, including CVaR risk logic, drift monitoring, walk-forward validation, purged/embargoed validation, HMM-style regime features, mini backtest orchestration, experiment manifests, trading experiment audit checks, tool-calling research cycle checks, config validation checks, Numerai submission-format checks, RAG evaluation harness checks, Research OS checks, and a subprocess-backed uvicorn E2E test.
 ```
 
 Drift report demo:

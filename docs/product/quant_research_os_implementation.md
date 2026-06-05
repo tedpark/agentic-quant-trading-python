@@ -158,6 +158,18 @@ Cycle output:
 docs/benchmarks/research_cycle_report.md
 ```
 
+The research cycle now has three explicit layers:
+
+```text
+build_experiment_config()
+  -> validate_experiment_config()
+  -> runner registry dispatch
+```
+
+The config is dynamic, but execution is constrained by an allowlist. This keeps
+the chat interface flexible while preventing arbitrary shell or live-trading
+execution.
+
 Concept document:
 
 ```text

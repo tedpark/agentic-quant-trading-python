@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from hashlib import sha256
 from json import dumps
-from typing import Mapping
+from typing import Callable, Mapping, Sequence
 
 from agentic_quant.experiments.manifest import ExperimentManifest, build_mini_backtest_manifest
 from agentic_quant.experiments.orchestration import ExperimentFoldResult, run_mini_experiment
@@ -21,11 +21,20 @@ ALLOWED_RESEARCH_TOOLS = (
     "write_report",
 )
 
+ALLOWED_RUNNERS = ("mini_backtest",)
+ALLOWED_DATA_SOURCES = ("synthetic_market_bars",)
+ALLOWED_STRATEGIES = (
+    "pair_mean_reversion_regime_filter",
+    "risk_aware_distributional_rl",
+    "regime_aware_momentum",
+)
+
 
 @dataclass(frozen=True)
 class ResearchCycleConfig:
     run_id: str
     idea: str
+    runner: str
     strategy_name: str
     data_source: str
     train_size: int
@@ -41,6 +50,7 @@ class ResearchCycleConfig:
             {
                 "run_id": self.run_id,
                 "idea": self.idea,
+                "runner": self.runner,
                 "strategy_name": self.strategy_name,
                 "data_source": self.data_source,
                 "train_size": self.train_size,
@@ -137,6 +147,9 @@ class ResearchCycleReport:
         return "\n".join(lines) + "\n"
 
 
+RunnerFn = Callable[[ResearchCycleConfig], tuple[ExperimentFoldResult, ...]]
+
+
 def build_experiment_config(idea: str) -> ResearchCycleConfig:
     normalized = idea.strip()
     if not normalized:
@@ -151,6 +164,7 @@ def build_experiment_config(idea: str) -> ResearchCycleConfig:
     return ResearchCycleConfig(
         run_id=run_id,
         idea=normalized,
+        runner="mini_backtest",
         strategy_name=_strategy_name(text),
         data_source="synthetic_market_bars",
         train_size=90,
@@ -163,25 +177,52 @@ def build_experiment_config(idea: str) -> ResearchCycleConfig:
     )
 
 
+def validate_experiment_config(config: ResearchCycleConfig) -> ResearchCycleConfig:
+    errors: list[str] = []
+    if not config.run_id:
+        errors.append("run_id is required")
+    if not config.idea.strip():
+        errors.append("idea is required")
+    if config.runner not in ALLOWED_RUNNERS:
+        errors.append(f"runner is not allowlisted: {config.runner}")
+    if config.strategy_name not in ALLOWED_STRATEGIES:
+        errors.append(f"strategy is not allowlisted: {config.strategy_name}")
+    if config.data_source not in ALLOWED_DATA_SOURCES:
+        errors.append(f"data source is not allowlisted: {config.data_source}")
+    if config.allow_live_trading:
+        errors.append("live trading must be disabled")
+    if config.train_size <= 0 or config.validation_size <= 0 or config.test_size <= 0 or config.step_size <= 0:
+        errors.append("window sizes must be positive")
+    if config.train_size <= config.validation_size:
+        errors.append("train_size should be larger than validation_size")
+    if not config.thresholds:
+        errors.append("thresholds must not be empty")
+    if any(threshold < 0 for threshold in config.thresholds):
+        errors.append("thresholds must be non-negative")
+    if config.transaction_cost < 0:
+        errors.append("transaction_cost must be non-negative")
+
+    if errors:
+        raise ValueError("invalid experiment config: " + "; ".join(errors))
+    return config
+
+
 def run_research_cycle(idea: str, *, policy: PromotionPolicy = PromotionPolicy()) -> ResearchCycleReport:
     tool_calls: list[ResearchToolCall] = []
 
     plan = plan_experiment(idea)
     tool_calls.append(_tool_call("plan_experiment", {"idea": idea}, "created leakage-aware experiment plan"))
 
-    config = build_experiment_config(idea)
-    _reject_live_trading(config)
-    tool_calls.append(_tool_call("build_experiment_config", {"run_id": config.run_id}, "created safe synthetic-data config"))
-
-    folds = run_mini_experiment(
-        synthetic_market_bars(240),
-        train_size=config.train_size,
-        validation_size=config.validation_size,
-        test_size=config.test_size,
-        step_size=config.step_size,
-        thresholds=config.thresholds,
-        transaction_cost=config.transaction_cost,
+    config = validate_experiment_config(build_experiment_config(idea))
+    tool_calls.append(
+        _tool_call(
+            "build_experiment_config",
+            {"run_id": config.run_id, "runner": config.runner},
+            "created and validated safe synthetic-data config",
+        )
     )
+
+    folds = _run_registered_runner(config)
     tool_calls.append(_tool_call("run_mini_backtest", {"folds": len(folds)}, "ran walk-forward mini backtest"))
 
     manifest = build_mini_backtest_manifest(
@@ -229,9 +270,29 @@ def _strategy_name(text: str) -> str:
     return "regime_aware_momentum"
 
 
-def _reject_live_trading(config: ResearchCycleConfig) -> None:
-    if config.allow_live_trading:
-        raise ValueError("research cycle cannot enable live trading")
+def _run_registered_runner(config: ResearchCycleConfig) -> tuple[ExperimentFoldResult, ...]:
+    runner = _runner_registry()[config.runner]
+    return runner(config)
+
+
+def _runner_registry() -> Mapping[str, RunnerFn]:
+    return {"mini_backtest": _run_mini_backtest_from_config}
+
+
+def _run_mini_backtest_from_config(config: ResearchCycleConfig) -> tuple[ExperimentFoldResult, ...]:
+    return run_mini_experiment(
+        synthetic_market_bars(240),
+        train_size=config.train_size,
+        validation_size=config.validation_size,
+        test_size=config.test_size,
+        step_size=config.step_size,
+        thresholds=_as_float_tuple(config.thresholds),
+        transaction_cost=config.transaction_cost,
+    )
+
+
+def _as_float_tuple(values: Sequence[float]) -> tuple[float, ...]:
+    return tuple(float(value) for value in values)
 
 
 def _tool_call(name: str, arguments: Mapping[str, object], summary: str) -> ResearchToolCall:

@@ -17,7 +17,7 @@ builds a manifest, and applies the promotion gate.
 | Tool | Status | Summary |
 |---|---|---|
 | `plan_experiment` | `ok` | created leakage-aware experiment plan |
-| `build_experiment_config` | `ok` | created safe synthetic-data config |
+| `build_experiment_config` | `ok` | created and validated safe synthetic-data config |
 | `run_mini_backtest` | `ok` | ran walk-forward mini backtest |
 | `build_manifest` | `ok` | built experiment manifest |
 | `audit_experiment` | `ok` | applied promotion gate |
@@ -31,6 +31,7 @@ builds a manifest, and applies the promotion gate.
   "data_source": "synthetic_market_bars",
   "idea": "HMM sideways regime improves mean-reversion entries for cointegrated pairs",
   "run_id": "9ff3bb850f5f",
+  "runner": "mini_backtest",
   "step_size": 24,
   "strategy_name": "pair_mean_reversion_regime_filter",
   "test_size": 24,
