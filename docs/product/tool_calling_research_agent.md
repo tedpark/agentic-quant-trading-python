@@ -77,6 +77,7 @@ make agent-builder-demo
 make research-cycle-demo
 make contract-review-demo
 quant-research build-agent --idea "HMM regime features improve pair spread entries"
+quant-research build-agent --spec-input docs/benchmarks/agent_spec.json --run-dir docs/runs
 quant-research cycle --idea "HMM regime features improve pair spread entries"
 quant-research review --input docs/benchmarks/experiment_run_contract.json
 ```
@@ -165,6 +166,19 @@ experiment configs. This is how an "agent that builds agents" stays bounded:
 the model can propose an agent spec, but the application executes only the
 validated config through registered runners.
 
+For production-style replay, the CLI can load an existing spec:
+
+```bash
+quant-research build-agent \
+  --spec-input docs/benchmarks/agent_spec.json \
+  --run-dir docs/runs
+```
+
+The `agent_spec.v1` loader is strict. Unknown keys, unsupported schema versions,
+duplicate tools, non-allowlisted tools, and live-trading configs are rejected
+before dispatch. Reports, specs, contracts, and state files are written through
+atomic replacement.
+
 ## Current Implementation
 
 Implemented files:
@@ -197,6 +211,9 @@ Implemented safeguards:
   definition.
 - `validate_agent_spec()` checks role, allowed tools, safety constraints,
   required outputs, and config validity before any runner dispatch.
+- `parse_agent_spec_json()` strictly loads replayable `agent_spec.v1` files.
+- `write_agent_builder_artifacts()` writes reports, specs, contracts, and state
+  files through atomic replacement.
 - `validate_experiment_config()` checks runner, strategy, data source, safety,
   window sizes, thresholds, and transaction cost.
 - `_runner_registry()` maps approved runner ids to implementation functions.

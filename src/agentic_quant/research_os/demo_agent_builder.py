@@ -3,7 +3,7 @@ from __future__ import annotations
 from argparse import ArgumentParser
 from pathlib import Path
 
-from agentic_quant.research_os.agent_builder import run_agent_builder
+from agentic_quant.research_os.agent_builder import AgentBuilderArtifactPaths, run_agent_builder, write_agent_builder_artifacts
 
 
 def main() -> None:
@@ -20,15 +20,14 @@ def main() -> None:
     args = parser.parse_args()
 
     report = run_agent_builder(args.idea)
-    outputs = {
-        Path(args.output): report.to_markdown(),
-        Path(args.spec_output): report.spec.to_json(),
-        Path(args.contract_output): report.cycle.contract.to_json(),
-        Path(args.state_output): report.state.to_json(),
-    }
-    for path, text in outputs.items():
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(text, encoding="utf-8")
+    paths = AgentBuilderArtifactPaths(
+        output=Path(args.output),
+        spec_output=Path(args.spec_output),
+        contract_output=Path(args.contract_output),
+        state_output=Path(args.state_output),
+    )
+    write_agent_builder_artifacts(report, paths)
+    for path in (paths.output, paths.spec_output, paths.contract_output, paths.state_output):
         print(f"wrote {path}")
 
 

@@ -25,6 +25,7 @@ to an allowlisted research runner. The generated agent cannot execute arbitrary 
     "audit_experiment",
     "write_report"
   ],
+  "builder_version": "quant_sigma_agent_builder.v1",
   "config": {
     "allow_live_trading": false,
     "data_source": "synthetic_market_bars",
@@ -62,7 +63,8 @@ to an allowlisted research runner. The generated agent cannot execute arbitrary 
     "promotion_review",
     "markdown_report"
   ],
-  "role": "financial_ml_experiment_agent"
+  "role": "financial_ml_experiment_agent",
+  "schema_version": "agent_spec.v1"
 }
 ```
 

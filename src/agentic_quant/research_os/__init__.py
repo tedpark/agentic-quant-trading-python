@@ -6,12 +6,19 @@ from agentic_quant.research_os.audit import (
     audit_experiment_run_contract,
 )
 from agentic_quant.research_os.agent_builder import (
+    AGENT_BUILDER_VERSION,
+    AGENT_SPEC_SCHEMA_VERSION,
+    AgentBuilderArtifactPaths,
     AgentBuilderReport,
     AgentBuilderState,
     AgentSpec,
     build_agent_spec,
+    default_agent_builder_paths,
+    parse_agent_spec_json,
     run_agent_builder,
+    run_agent_builder_from_spec,
     validate_agent_spec,
+    write_agent_builder_artifacts,
 )
 from agentic_quant.research_os.copilot import answer_question
 from agentic_quant.research_os.contract import (
@@ -61,6 +68,9 @@ __all__ = [
     "ResearchCycleConfig",
     "ResearchCycleReport",
     "ResearchWorkflowState",
+    "AGENT_BUILDER_VERSION",
+    "AGENT_SPEC_SCHEMA_VERSION",
+    "AgentBuilderArtifactPaths",
     "AgentBuilderReport",
     "AgentBuilderState",
     "AgentSpec",
@@ -75,6 +85,7 @@ __all__ = [
     "audit_experiment",
     "audit_experiment_run_contract",
     "build_agent_spec",
+    "default_agent_builder_paths",
     "build_research_graph",
     "build_research_index",
     "build_experiment_run_contract",
@@ -82,8 +93,11 @@ __all__ = [
     "plan_experiment",
     "run_research_cycle",
     "run_agent_builder",
+    "run_agent_builder_from_spec",
+    "parse_agent_spec_json",
     "search_index",
     "validate_experiment_config",
     "validate_agent_spec",
     "validate_experiment_run_contract",
+    "write_agent_builder_artifacts",
 ]

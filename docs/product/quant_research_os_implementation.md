@@ -178,6 +178,23 @@ docs/benchmarks/agent_builder_state.json
 docs/benchmarks/experiment_run_contract.json
 ```
 
+Production-style replay:
+
+```bash
+quant-research build-agent \
+  --spec-input docs/benchmarks/agent_spec.json \
+  --run-dir docs/runs
+```
+
+This writes run-scoped artifacts under:
+
+```text
+docs/runs/<run_id>/agent_builder_report.md
+docs/runs/<run_id>/agent_spec.json
+docs/runs/<run_id>/experiment_run_contract.json
+docs/runs/<run_id>/agent_builder_state.json
+```
+
 Contract-only promotion review:
 
 ```bash
@@ -210,6 +227,12 @@ build_agent_spec()
 The generated agent is not executable Python. It is a structured spec with an
 agent id, role, goal, dynamic experiment config, allowed tools, safety
 constraints, and required outputs.
+
+The spec is versioned as `agent_spec.v1`, parsed through a strict JSON loader,
+and rejected if it contains unknown keys, unsupported schema versions,
+non-allowlisted tools, duplicate tools, live-trading configs, or missing
+`experiment_run.v1` output. Artifact writes use atomic file replacement so a
+partial write does not leave a corrupt report.
 
 The research cycle now has three explicit layers:
 
@@ -250,6 +273,8 @@ Done:
 - trading experiment audit reports
 - allowlisted research cycle runner
 - Wonderful-style agent spec builder
+- strict `agent_spec.v1` parser and replay path
+- run-scoped artifact directory support
 - experiment_run.v1 contract export and validation
 - feature fit scope, cost stress, regime breakdown, and benchmark comparison in the contract
 - CI-friendly tests
