@@ -175,6 +175,8 @@ Agent builder output:
 docs/benchmarks/agent_builder_report.md
 docs/benchmarks/agent_spec.json
 docs/benchmarks/agent_builder_state.json
+docs/benchmarks/agent_builder_run_manifest.json
+docs/benchmarks/agent_builder_events.jsonl
 docs/benchmarks/experiment_run_contract.json
 ```
 
@@ -193,6 +195,16 @@ docs/runs/<run_id>/agent_builder_report.md
 docs/runs/<run_id>/agent_spec.json
 docs/runs/<run_id>/experiment_run_contract.json
 docs/runs/<run_id>/agent_builder_state.json
+docs/runs/<run_id>/agent_builder_run_manifest.json
+docs/runs/<run_id>/agent_builder_events.jsonl
+```
+
+Validation-only command:
+
+```bash
+quant-research validate-spec \
+  --input docs/benchmarks/agent_spec.json \
+  --output /tmp/normalized_agent_spec.json
 ```
 
 Contract-only promotion review:
@@ -233,6 +245,11 @@ and rejected if it contains unknown keys, unsupported schema versions,
 non-allowlisted tools, duplicate tools, live-trading configs, or missing
 `experiment_run.v1` output. Artifact writes use atomic file replacement so a
 partial write does not leave a corrupt report.
+
+Each run writes a `agent_builder_run_manifest.v1` file with SHA-256 hashes for
+the spec, contract, report, and state file. The JSONL event log records the
+ordered builder steps so production runs can be audited without parsing the
+Markdown report.
 
 The research cycle now has three explicit layers:
 
@@ -275,6 +292,8 @@ Done:
 - Wonderful-style agent spec builder
 - strict `agent_spec.v1` parser and replay path
 - run-scoped artifact directory support
+- run manifest with artifact hashes
+- JSONL event log for ordered builder steps
 - experiment_run.v1 contract export and validation
 - feature fit scope, cost stress, regime breakdown, and benchmark comparison in the contract
 - CI-friendly tests

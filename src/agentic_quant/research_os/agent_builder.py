@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
+from datetime import UTC, datetime
+from hashlib import sha256
 from json import JSONDecodeError, dumps, loads
 from pathlib import Path
 from tempfile import NamedTemporaryFile
@@ -159,6 +161,25 @@ class AgentBuilderArtifactPaths:
     spec_output: Path
     contract_output: Path
     state_output: Path
+    manifest_output: Path
+    event_log_output: Path
+
+
+@dataclass(frozen=True)
+class AgentBuilderRunManifest:
+    schema_version: str
+    builder_version: str
+    run_id: str
+    agent_id: str
+    created_at: str
+    spec_sha256: str
+    contract_sha256: str
+    report_sha256: str
+    state_sha256: str
+    artifact_paths: dict[str, str]
+
+    def to_json(self) -> str:
+        return dumps(asdict(self), indent=2, sort_keys=True)
 
 
 def build_agent_spec(idea: str) -> AgentSpec:
@@ -292,11 +313,26 @@ def run_agent_builder_from_spec(spec: AgentSpec) -> AgentBuilderReport:
 
 
 def write_agent_builder_artifacts(report: AgentBuilderReport, paths: AgentBuilderArtifactPaths) -> None:
+    report_text = report.to_markdown()
+    spec_text = report.spec.to_json()
+    contract_text = report.cycle.contract.to_json()
+    state_text = report.state.to_json()
+    event_log_text = _event_log_jsonl(report)
+    manifest_text = _build_run_manifest(
+        report,
+        paths,
+        report_text=report_text,
+        spec_text=spec_text,
+        contract_text=contract_text,
+        state_text=state_text,
+    ).to_json()
     writes = {
-        paths.output: report.to_markdown(),
-        paths.spec_output: report.spec.to_json(),
-        paths.contract_output: report.cycle.contract.to_json(),
-        paths.state_output: report.state.to_json(),
+        paths.output: report_text,
+        paths.spec_output: spec_text,
+        paths.contract_output: contract_text,
+        paths.state_output: state_text,
+        paths.manifest_output: manifest_text,
+        paths.event_log_output: event_log_text,
     }
     for path, text in writes.items():
         _atomic_write_text(path, text)
@@ -309,6 +345,8 @@ def default_agent_builder_paths(run_dir: Path | None = None, *, run_id: str | No
             spec_output=Path("docs/benchmarks/agent_spec.json"),
             contract_output=Path("docs/benchmarks/experiment_run_contract.json"),
             state_output=Path("docs/benchmarks/agent_builder_state.json"),
+            manifest_output=Path("docs/benchmarks/agent_builder_run_manifest.json"),
+            event_log_output=Path("docs/benchmarks/agent_builder_events.jsonl"),
         )
     if run_id:
         run_dir = run_dir / run_id
@@ -317,6 +355,8 @@ def default_agent_builder_paths(run_dir: Path | None = None, *, run_id: str | No
         spec_output=run_dir / "agent_spec.json",
         contract_output=run_dir / "experiment_run_contract.json",
         state_output=run_dir / "agent_builder_state.json",
+        manifest_output=run_dir / "agent_builder_run_manifest.json",
+        event_log_output=run_dir / "agent_builder_events.jsonl",
     )
 
 
@@ -325,6 +365,56 @@ def _goal_from_config(config: ResearchCycleConfig) -> str:
         "Run a leakage-aware financial ML experiment from the idea, using only "
         f"the `{config.runner}` runner and exporting an experiment_run.v1 contract."
     )
+
+
+def _build_run_manifest(
+    report: AgentBuilderReport,
+    paths: AgentBuilderArtifactPaths,
+    *,
+    report_text: str,
+    spec_text: str,
+    contract_text: str,
+    state_text: str,
+) -> AgentBuilderRunManifest:
+    return AgentBuilderRunManifest(
+        schema_version="agent_builder_run_manifest.v1",
+        builder_version=AGENT_BUILDER_VERSION,
+        run_id=report.spec.config.run_id,
+        agent_id=report.spec.agent_id,
+        created_at=datetime.now(UTC).isoformat(timespec="seconds"),
+        spec_sha256=_sha256_text(spec_text),
+        contract_sha256=_sha256_text(contract_text),
+        report_sha256=_sha256_text(report_text),
+        state_sha256=_sha256_text(state_text),
+        artifact_paths={
+            "report": str(paths.output),
+            "spec": str(paths.spec_output),
+            "contract": str(paths.contract_output),
+            "state": str(paths.state_output),
+            "manifest": str(paths.manifest_output),
+            "event_log": str(paths.event_log_output),
+        },
+    )
+
+
+def _event_log_jsonl(report: AgentBuilderReport) -> str:
+    events: list[dict[str, object]] = []
+    for index, step in enumerate(report.state.completed_steps, start=1):
+        events.append(
+            {
+                "schema_version": "agent_builder_event.v1",
+                "builder_version": AGENT_BUILDER_VERSION,
+                "run_id": report.spec.config.run_id,
+                "agent_id": report.spec.agent_id,
+                "sequence": index,
+                "step": step,
+            }
+        )
+    return "\n".join(dumps(event, sort_keys=True) for event in events) + "\n"
+
+
+def _sha256_text(text: str) -> str:
+    return sha256(text.encode("utf-8")).hexdigest()
 
 
 def _parse_research_cycle_config(payload: dict[str, object]) -> ResearchCycleConfig:

@@ -19,7 +19,7 @@ This repo is a sanitized public companion. It does not mirror the private tradin
 | HMM-style regime feature pipeline | done | Fits feature standardization and regime model on training windows only. |
 | Mini backtest orchestration | done | Connects synthetic features, regimes, validation selection, transaction costs, and CVaR-style metrics. |
 | Experiment manifest / run log | done | Records parameters, validation protocol, artifacts, and public/private boundaries for reproducible public runs. |
-| Agent Builder spec / validator | done | Turns an idea into a validated `agent_spec.v1`, supports strict replay from JSON, then dispatches only allowlisted runners. |
+| Agent Builder spec / validator | done | Turns an idea into a validated `agent_spec.v1`, supports strict replay from JSON, writes hash manifests and event logs, then dispatches only allowlisted runners. |
 
 ## Keep Private
 

@@ -4,6 +4,7 @@ from pathlib import Path
 
 import pytest
 
+from hashlib import sha256
 from json import dumps, loads
 
 from agentic_quant.research_os.agent_builder import (
@@ -150,6 +151,8 @@ def test_cli_build_agent_can_replay_from_spec_input(tmp_path: Path) -> None:
     spec_output = tmp_path / "agent_spec_out.json"
     contract = tmp_path / "experiment_run.json"
     state = tmp_path / "agent_builder_state.json"
+    manifest = tmp_path / "agent_builder_run_manifest.json"
+    events = tmp_path / "agent_builder_events.jsonl"
 
     exit_code = main(
         [
@@ -164,6 +167,10 @@ def test_cli_build_agent_can_replay_from_spec_input(tmp_path: Path) -> None:
             str(contract),
             "--state-output",
             str(state),
+            "--manifest-output",
+            str(manifest),
+            "--event-log-output",
+            str(events),
         ]
     )
 
@@ -191,3 +198,68 @@ def test_cli_build_agent_run_dir_writes_run_scoped_artifacts(tmp_path: Path) -> 
     assert (run_dir / "agent_spec.json").exists()
     assert (run_dir / "experiment_run_contract.json").exists()
     assert (run_dir / "agent_builder_state.json").exists()
+    assert (run_dir / "agent_builder_run_manifest.json").exists()
+    assert (run_dir / "agent_builder_events.jsonl").exists()
+
+
+def test_agent_builder_run_manifest_records_artifact_hashes(tmp_path: Path) -> None:
+    main(
+        [
+            "build-agent",
+            "--idea",
+            "HMM regime features improve pair spread entries",
+            "--run-dir",
+            str(tmp_path),
+        ]
+    )
+
+    run_id = build_agent_spec("HMM regime features improve pair spread entries").config.run_id
+    run_dir = tmp_path / run_id
+    manifest = loads((run_dir / "agent_builder_run_manifest.json").read_text(encoding="utf-8"))
+    spec_text = (run_dir / "agent_spec.json").read_text(encoding="utf-8")
+    contract_text = (run_dir / "experiment_run_contract.json").read_text(encoding="utf-8")
+    state_text = (run_dir / "agent_builder_state.json").read_text(encoding="utf-8")
+    report_text = (run_dir / "agent_builder_report.md").read_text(encoding="utf-8")
+
+    assert manifest["schema_version"] == "agent_builder_run_manifest.v1"
+    assert manifest["spec_sha256"] == sha256(spec_text.encode("utf-8")).hexdigest()
+    assert manifest["contract_sha256"] == sha256(contract_text.encode("utf-8")).hexdigest()
+    assert manifest["state_sha256"] == sha256(state_text.encode("utf-8")).hexdigest()
+    assert manifest["report_sha256"] == sha256(report_text.encode("utf-8")).hexdigest()
+
+
+def test_agent_builder_event_log_records_ordered_steps(tmp_path: Path) -> None:
+    main(
+        [
+            "build-agent",
+            "--idea",
+            "HMM regime features improve pair spread entries",
+            "--run-dir",
+            str(tmp_path),
+        ]
+    )
+
+    run_id = build_agent_spec("HMM regime features improve pair spread entries").config.run_id
+    events = [
+        loads(line)
+        for line in (tmp_path / run_id / "agent_builder_events.jsonl").read_text(encoding="utf-8").splitlines()
+    ]
+    assert [event["sequence"] for event in events] == [1, 2, 3]
+    assert [event["step"] for event in events] == [
+        "build_agent_spec",
+        "validate_agent_spec",
+        "run_research_cycle_from_agent_spec",
+    ]
+
+
+def test_cli_validate_spec_normalizes_spec_without_running(tmp_path: Path) -> None:
+    spec = tmp_path / "agent_spec.json"
+    normalized = tmp_path / "normalized_agent_spec.json"
+    spec.write_text(build_agent_spec("HMM regime features improve pair spread entries").to_json(), encoding="utf-8")
+
+    exit_code = main(["validate-spec", "--input", str(spec), "--output", str(normalized)])
+
+    assert exit_code == 0
+    payload = loads(normalized.read_text(encoding="utf-8"))
+    assert payload["schema_version"] == "agent_spec.v1"
+    assert payload["config"]["allow_live_trading"] is False

@@ -88,6 +88,8 @@ Output:
 docs/benchmarks/agent_builder_report.md
 docs/benchmarks/agent_spec.json
 docs/benchmarks/agent_builder_state.json
+docs/benchmarks/agent_builder_run_manifest.json
+docs/benchmarks/agent_builder_events.jsonl
 docs/benchmarks/research_cycle_report.md
 docs/benchmarks/experiment_run_contract.json
 docs/benchmarks/research_workflow_state.json
@@ -174,10 +176,22 @@ quant-research build-agent \
   --run-dir docs/runs
 ```
 
+Spec validation can run without dispatching a backtest:
+
+```bash
+quant-research validate-spec \
+  --input docs/benchmarks/agent_spec.json \
+  --output /tmp/normalized_agent_spec.json
+```
+
 The `agent_spec.v1` loader is strict. Unknown keys, unsupported schema versions,
 duplicate tools, non-allowlisted tools, and live-trading configs are rejected
 before dispatch. Reports, specs, contracts, and state files are written through
 atomic replacement.
+
+The builder also writes a `agent_builder_run_manifest.v1` file containing
+SHA-256 hashes for the generated spec, contract, state, and report. A JSONL
+event log records ordered builder steps for audit and replay inspection.
 
 ## Current Implementation
 

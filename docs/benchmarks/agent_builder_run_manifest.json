@@ -1,0 +1,19 @@
+{
+  "agent_id": "financial_ml_experiment_agent:0ce5bbd59dae",
+  "artifact_paths": {
+    "contract": "/private/var/folders/yf/0j9h4ldj6473tm4rwpj_13z00000gn/T/pytest-of-ted/pytest-16/test_cli_build_agent_writes_re0/experiment_run.json",
+    "event_log": "docs/benchmarks/agent_builder_events.jsonl",
+    "manifest": "docs/benchmarks/agent_builder_run_manifest.json",
+    "report": "/private/var/folders/yf/0j9h4ldj6473tm4rwpj_13z00000gn/T/pytest-of-ted/pytest-16/test_cli_build_agent_writes_re0/agent_builder.md",
+    "spec": "/private/var/folders/yf/0j9h4ldj6473tm4rwpj_13z00000gn/T/pytest-of-ted/pytest-16/test_cli_build_agent_writes_re0/agent_spec.json",
+    "state": "/private/var/folders/yf/0j9h4ldj6473tm4rwpj_13z00000gn/T/pytest-of-ted/pytest-16/test_cli_build_agent_writes_re0/agent_builder_state.json"
+  },
+  "builder_version": "quant_sigma_agent_builder.v1",
+  "contract_sha256": "a63fc791e793311ab5cb50607d166d81cc9d86916dedc64f42dfa20585427d33",
+  "created_at": "2026-06-05T22:12:47+00:00",
+  "report_sha256": "93f4e3ca5b17aead6ca432bc244fd7d7df3c1924ec5ba169a95d904be24ba4a9",
+  "run_id": "0ce5bbd59dae",
+  "schema_version": "agent_builder_run_manifest.v1",
+  "spec_sha256": "63a3ec1a981d92ce76eb3646d8658b7bea73458abd29a9c54e3b9cea95771d52",
+  "state_sha256": "a3e369e1ea0c4fdd35d0506f9d429a0badc2653bfec036b4d7267a4844766e76"
+}

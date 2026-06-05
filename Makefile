@@ -46,7 +46,7 @@ research-cycle-demo:
 	PYTHONPATH=src python -m agentic_quant.research_os.demo_cycle --output docs/benchmarks/research_cycle_report.md
 
 agent-builder-demo:
-	PYTHONPATH=src python -m agentic_quant.research_os.demo_agent_builder --output docs/benchmarks/agent_builder_report.md --spec-output docs/benchmarks/agent_spec.json --contract-output docs/benchmarks/experiment_run_contract.json --state-output docs/benchmarks/agent_builder_state.json
+	PYTHONPATH=src python -m agentic_quant.research_os.demo_agent_builder --output docs/benchmarks/agent_builder_report.md --spec-output docs/benchmarks/agent_spec.json --contract-output docs/benchmarks/experiment_run_contract.json --state-output docs/benchmarks/agent_builder_state.json --manifest-output docs/benchmarks/agent_builder_run_manifest.json --event-log-output docs/benchmarks/agent_builder_events.jsonl
 
 contract-review-demo:
 	PYTHONPATH=src python -m agentic_quant.research_os.demo_contract_review --input docs/benchmarks/experiment_run_contract.json --output docs/benchmarks/contract_promotion_review.md
