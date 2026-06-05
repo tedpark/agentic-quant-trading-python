@@ -1,7 +1,16 @@
 from agentic_quant.research_os.copilot import answer_question
+from agentic_quant.research_os.graph import build_research_graph
 from agentic_quant.research_os.ingest import build_research_index
 from agentic_quant.research_os.planner import plan_experiment
-from agentic_quant.research_os.schema import ResearchAnswer, ResearchArtifact, ResearchChunk, ResearchCitation
+from agentic_quant.research_os.schema import (
+    ResearchAnswer,
+    ResearchArtifact,
+    ResearchChunk,
+    ResearchCitation,
+    ResearchEdge,
+    ResearchGraph,
+    ResearchNode,
+)
 from agentic_quant.research_os.search import search_index
 
 __all__ = [
@@ -9,7 +18,11 @@ __all__ = [
     "ResearchArtifact",
     "ResearchChunk",
     "ResearchCitation",
+    "ResearchEdge",
+    "ResearchGraph",
+    "ResearchNode",
     "answer_question",
+    "build_research_graph",
     "build_research_index",
     "plan_experiment",
     "search_index",

@@ -14,7 +14,7 @@ This project is not investment advice, a trading signal service, or a live tradi
 - Reproducible experiment manifests / run logs for public artifacts
 - Numerai benchmark-trail preparation with submission format validation
 - RAG evaluation harness with golden-set metrics, retrieval checks, citation coverage, and answer-support scoring
-- QuantSigma Research OS prototype for artifact ingestion, cited answers, and hypothesis-to-experiment planning
+- QuantSigma Research OS prototype for artifact ingestion, research graph extraction, cited answers, and hypothesis-to-experiment manifests
 - Risk-aware model evaluation with CVaR / Expected Shortfall
 - Distributional RL patterns such as QR-DQN return quantiles
 - FastAPI model serving with model version visibility
@@ -151,7 +151,7 @@ Private:
 10. Add experiment manifest / run log for reproducibility. Done.
 11. Add Numerai public benchmark trail preparation. Done.
 12. Add deterministic RAG evaluation harness for LLM/RAG Evaluation roles. Done.
-13. Add QuantSigma Research OS prototype for cited quant research answers and experiment planning. Done.
+13. Add QuantSigma Research OS prototype for cited quant research answers and experiment manifest planning. Done.
 14. Connect repo to QuantSigma.ai, Medium, and LinkedIn Featured.
 
 ## Local Commands

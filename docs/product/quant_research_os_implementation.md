@@ -74,9 +74,10 @@ Implemented package:
 src/agentic_quant/research_os/
   ingest.py       # Markdown artifact ingestion and section chunking
   search.py       # deterministic keyword retrieval
+  graph.py        # financial ML concept graph extraction
   copilot.py      # cited answer composer
-  planner.py      # hypothesis-to-experiment planner
-  schema.py       # typed artifacts, chunks, citations, answers
+  planner.py      # hypothesis-to-experiment planner and YAML manifest export
+  schema.py       # typed artifacts, chunks, citations, graph nodes, answers
 ```
 
 Implemented tests:
@@ -99,15 +100,26 @@ docs/benchmarks/research_os_demo.md
 
 ## Next Build Steps
 
-1. Add experiment-manifest YAML export from the planner.
-2. Add citation coverage and answer-support evaluation for Research OS answers.
-3. Add a small UI page on `quantsigma.ai` showing the Research OS pipeline.
-4. Publish a LinkedIn / Medium post explaining why quant research is an
+Done:
+
+- Markdown artifact ingestion
+- deterministic retrieval
+- cited answers
+- financial ML research graph
+- hypothesis-to-experiment planning
+- YAML experiment manifest export
+- CI-friendly tests
+
+Next:
+
+1. Add citation coverage and answer-support evaluation for Research OS answers.
+2. Add a small UI page on `quantsigma.ai` showing the Research OS pipeline.
+3. Publish a LinkedIn / Medium post explaining why quant research is an
    experiment lifecycle problem, not a chat problem.
-5. Add one portfolio bullet:
+4. Add one portfolio bullet:
 
 ```text
-Built QuantSigma Research OS, a deterministic financial ML research workflow
-engine that ingests research artifacts, returns cited answers, and converts
-trading ideas into leakage-aware experiment plans.
+Built QuantSigma Research OS, a deterministic financial ML research workflow engine
+that ingests research artifacts, extracts a validation/risk/feature graph, returns
+cited answers, and converts trading ideas into leakage-aware experiment manifests.
 ```

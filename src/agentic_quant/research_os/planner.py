@@ -33,6 +33,31 @@ class ExperimentPlan:
         lines.extend(f"- {item}" for item in self.failure_cases)
         return "\n".join(lines) + "\n"
 
+    def to_manifest_yaml(self) -> str:
+        lines = [
+            f"run_id: {self.run_id}",
+            "system: QuantSigma Research OS",
+            f"hypothesis: {_yaml_scalar(self.hypothesis)}",
+            "feature_candidates:",
+        ]
+        lines.extend(f"  - {_yaml_scalar(item)}" for item in self.feature_candidates)
+        lines.append("validation_protocol:")
+        lines.extend(f"  - {_yaml_scalar(item)}" for item in self.validation_protocol)
+        lines.append("risk_checks:")
+        lines.extend(f"  - {_yaml_scalar(item)}" for item in self.risk_checks)
+        lines.append("expected_failure_cases:")
+        lines.extend(f"  - {_yaml_scalar(item)}" for item in self.failure_cases)
+        lines.extend(
+            [
+                "public_boundary:",
+                "  - synthetic or public data only",
+                "  - no live broker integration",
+                "  - no private trading universe",
+                "  - no production thresholds",
+            ]
+        )
+        return "\n".join(lines) + "\n"
+
 
 def plan_experiment(idea: str) -> ExperimentPlan:
     normalized = idea.strip()
@@ -82,3 +107,8 @@ def _feature_candidates(idea: str) -> tuple[str, ...]:
     if "rl" in text or "qrdqn" in text or "qr-dqn" in text:
         features.extend(["return quantile features", "CVaR-aware action score", "policy entropy proxy"])
     return tuple(dict.fromkeys(features))
+
+
+def _yaml_scalar(value: str) -> str:
+    escaped = value.replace("\\", "\\\\").replace('"', '\\"')
+    return f'"{escaped}"'

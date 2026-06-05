@@ -4,7 +4,13 @@ from pathlib import Path
 
 import pytest
 
-from agentic_quant.research_os import answer_question, build_research_index, plan_experiment, search_index
+from agentic_quant.research_os import (
+    answer_question,
+    build_research_graph,
+    build_research_index,
+    plan_experiment,
+    search_index,
+)
 
 
 def test_research_index_splits_markdown_sections(tmp_path: Path) -> None:
@@ -60,6 +66,27 @@ def test_copilot_answer_contains_citations(tmp_path: Path) -> None:
     assert "answer-support" in answer.to_markdown()
 
 
+def test_research_graph_extracts_quant_concepts(tmp_path: Path) -> None:
+    doc = tmp_path / "artifact.md"
+    doc.write_text(
+        "# Research Note\n\n"
+        "## HMM Regime Features\n\n"
+        "HMM regime features need walk-forward validation and purged embargo checks.\n\n"
+        "## QR-DQN Risk\n\n"
+        "QR-DQN output can be evaluated with CVaR tail risk metrics.\n",
+        encoding="utf-8",
+    )
+    chunks = build_research_index([doc])
+
+    graph = build_research_graph(chunks)
+
+    assert {node.id for node in graph.nodes}.issuperset(
+        {"feature:hmm-regime", "validation:walk-forward", "validation:purged-embargo", "model:qr-dqn", "risk:cvar"}
+    )
+    assert any(edge.relation == "must_be_validated_with" for edge in graph.edges)
+    assert "Research Graph" in graph.to_markdown()
+
+
 def test_planner_creates_regime_aware_plan() -> None:
     plan = plan_experiment("HMM regime features improve pair spread entries")
 
@@ -67,6 +94,8 @@ def test_planner_creates_regime_aware_plan() -> None:
     assert any("HMM-style regime label" == feature for feature in plan.feature_candidates)
     assert any("purging and embargo" in protocol for protocol in plan.validation_protocol)
     assert "CVaR" in plan.to_markdown()
+    assert "feature_candidates:" in plan.to_manifest_yaml()
+    assert "public_boundary:" in plan.to_manifest_yaml()
 
 
 def test_empty_idea_is_rejected() -> None:

@@ -4,6 +4,7 @@ from argparse import ArgumentParser
 from pathlib import Path
 
 from agentic_quant.research_os.copilot import answer_question
+from agentic_quant.research_os.graph import build_research_graph
 from agentic_quant.research_os.ingest import build_research_index
 from agentic_quant.research_os.planner import plan_experiment
 
@@ -20,6 +21,7 @@ def main() -> None:
         Path("docs/benchmarks/rag_evaluation_harness.md"),
     ]
     chunks = build_research_index(path for path in paths if path.exists())
+    graph = build_research_graph(chunks)
     answer = answer_question("How should HMM regime features be validated in financial ML?", chunks)
     plan = plan_experiment("HMM sideways regime improves mean-reversion entries for cointegrated pairs")
 
@@ -33,9 +35,18 @@ def main() -> None:
                 "This demo shows the first implementation layer for a research operating system:",
                 "artifact ingestion, deterministic citation search, supported answers, and a hypothesis-to-experiment plan.",
                 "",
+                graph.to_markdown(),
+                "",
                 answer.to_markdown(),
                 "",
                 plan.to_markdown(),
+                "",
+                "## Experiment Manifest YAML",
+                "",
+                "```yaml",
+                plan.to_manifest_yaml().rstrip(),
+                "```",
+                "",
             ]
         ),
         encoding="utf-8",
