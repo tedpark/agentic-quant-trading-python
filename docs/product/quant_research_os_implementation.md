@@ -23,6 +23,20 @@ that only summarizes a backtest is not differentiated enough.
 The Python engine should move first. The website should only expose artifacts
 after the code, tests, and generated benchmark documents exist.
 
+## Product Boundary
+
+This is not a chatbot that executes trades.
+
+It can execute a research workflow:
+
+```text
+artifact ingestion -> retrieval -> graph extraction -> cited answer -> manifest export
+```
+
+It does not execute live orders, connect to brokers, expose private alpha logic,
+or make investment recommendations. A chat UI can be added later, but the core
+product is a financial ML research workflow engine.
+
 ## MVP 1: Research Copilot
 
 Inputs:
@@ -96,6 +110,12 @@ Demo output:
 
 ```text
 docs/benchmarks/research_os_demo.md
+```
+
+Concept document:
+
+```text
+docs/product/what_is_quant_research_os.md
 ```
 
 ## Next Build Steps

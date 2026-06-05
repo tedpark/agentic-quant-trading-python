@@ -98,6 +98,7 @@ agentic-quant-trading-python/
       research_os_demo.md
     product/
       quant_research_os_implementation.md
+      what_is_quant_research_os.md
 ```
 
 ## Public / Private Boundary
@@ -175,7 +176,7 @@ make serve
 Current test coverage:
 
 ```text
-52 tests passing, including CVaR risk logic, drift monitoring, walk-forward validation, purged/embargoed validation, HMM-style regime features, mini backtest orchestration, experiment manifests, Numerai submission-format checks, RAG evaluation harness checks, and a subprocess-backed uvicorn E2E test.
+58 tests passing, including CVaR risk logic, drift monitoring, walk-forward validation, purged/embargoed validation, HMM-style regime features, mini backtest orchestration, experiment manifests, Numerai submission-format checks, RAG evaluation harness checks, Research OS checks, and a subprocess-backed uvicorn E2E test.
 ```
 
 Drift report demo:
