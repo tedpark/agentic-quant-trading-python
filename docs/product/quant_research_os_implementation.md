@@ -209,6 +209,7 @@ Done:
 - trading experiment audit reports
 - allowlisted research cycle runner
 - experiment_run.v1 contract export and validation
+- feature fit scope, cost stress, regime breakdown, and benchmark comparison in the contract
 - CI-friendly tests
 
 Next:

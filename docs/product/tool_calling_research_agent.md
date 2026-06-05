@@ -155,7 +155,9 @@ Implemented safeguards:
 - `build_experiment_run_contract()` exports the stable `experiment_run.v1`
   contract that downstream promotion gates can validate.
 - `validate_experiment_run_contract()` rejects live-trading contracts,
-  non-time-ordered folds, missing artifacts, and weak public boundaries.
+  non-time-ordered folds, missing artifacts, non-train-only feature fitting,
+  missing cost stress, missing regime breakdown, missing benchmark comparison,
+  and weak public boundaries.
 - `audit_experiment_run_contract()` reviews an external `experiment_run.v1`
   file without needing internal Python manifest or fold objects.
 - `ResearchWorkflowState` records graph-style state transitions so the workflow
@@ -185,6 +187,17 @@ The current demo writes:
 ```text
 docs/benchmarks/experiment_run_contract.json
 ```
+
+The contract now carries:
+
+- model version
+- feature list and fit scope
+- fold-level validation/test metrics
+- cost-stress scenarios
+- regime breakdown
+- benchmark comparison
+- artifact paths
+- public/private execution boundary
 
 The trading system should export the same schema, and the agent should run:
 

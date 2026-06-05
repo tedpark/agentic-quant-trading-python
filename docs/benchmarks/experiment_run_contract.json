@@ -6,7 +6,53 @@
     "cycle_report": "docs/benchmarks/research_cycle_report.md",
     "manifest_report": "docs/benchmarks/experiment_manifest.md"
   },
+  "benchmark_comparison": [
+    {
+      "benchmark_name": "zero_return_baseline",
+      "cvar_delta": -0.000617,
+      "mean_return_delta": 0.000376,
+      "sharpe_delta": 2.640508
+    }
+  ],
+  "cost_stress": [
+    {
+      "max_turnover": 0.9583333333333334,
+      "mean_test_cvar": -0.001617,
+      "mean_test_return": 0.000376,
+      "scenario": "base_cost",
+      "transaction_cost": 0.0004
+    },
+    {
+      "max_turnover": 0.9583333333333334,
+      "mean_test_cvar": -0.001809,
+      "mean_test_return": -7e-06,
+      "scenario": "double_cost_proxy",
+      "transaction_cost": 0.0008
+    }
+  ],
   "data_source": "synthetic_market_bars",
+  "features": [
+    {
+      "fit_scope": "train_only",
+      "name": "rolling_return"
+    },
+    {
+      "fit_scope": "train_only",
+      "name": "realized_volatility"
+    },
+    {
+      "fit_scope": "train_only",
+      "name": "hmm_regime"
+    },
+    {
+      "fit_scope": "train_only",
+      "name": "spread_zscore"
+    },
+    {
+      "fit_scope": "train_only",
+      "name": "spread_half_life"
+    }
+  ],
   "folds": [
     {
       "fold": 1,
@@ -146,6 +192,7 @@
     }
   ],
   "manifest_run_id": "6e729a7f9eda",
+  "model_version": "research_demo_v1",
   "parameters": {
     "idea": "HMM sideways regime improves mean-reversion entries for cointegrated pairs",
     "step_size": 24,
@@ -167,6 +214,20 @@
     "no broker data or account data",
     "no live execution logic",
     "no production thresholds or private alpha features"
+  ],
+  "regime_breakdown": [
+    {
+      "cvar": -0.013291,
+      "mean_return": -0.000382,
+      "observations": 8,
+      "regime": "high_vol"
+    },
+    {
+      "cvar": -0.004064,
+      "mean_return": 0.000505,
+      "observations": 8,
+      "regime": "low_vol"
+    }
   ],
   "run_id": "9ff3bb850f5f",
   "runner": "mini_backtest",

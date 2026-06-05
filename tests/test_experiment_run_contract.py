@@ -3,7 +3,11 @@ from __future__ import annotations
 import pytest
 
 from agentic_quant.research_os.contract import (
+    BenchmarkComparisonContract,
+    CostStressContract,
     ExperimentRunContract,
+    FeatureContract,
+    RegimeBreakdownContract,
     build_experiment_run_contract,
     parse_experiment_run_contract,
     validate_experiment_run_contract,
@@ -36,6 +40,11 @@ def test_contract_validator_rejects_live_trading_contract() -> None:
         strategy_name=report.contract.strategy_name,
         data_source=report.contract.data_source,
         allow_live_trading=True,
+        model_version=report.contract.model_version,
+        features=report.contract.features,
+        cost_stress=report.contract.cost_stress,
+        regime_breakdown=report.contract.regime_breakdown,
+        benchmark_comparison=report.contract.benchmark_comparison,
         parameters=report.contract.parameters,
         folds=report.contract.folds,
         artifacts=report.contract.artifacts,
@@ -66,6 +75,11 @@ def test_contract_validator_rejects_non_time_ordered_fold() -> None:
         strategy_name=report.contract.strategy_name,
         data_source=report.contract.data_source,
         allow_live_trading=report.contract.allow_live_trading,
+        model_version=report.contract.model_version,
+        features=report.contract.features,
+        cost_stress=report.contract.cost_stress,
+        regime_breakdown=report.contract.regime_breakdown,
+        benchmark_comparison=report.contract.benchmark_comparison,
         parameters=report.contract.parameters,
         folds=(bad_fold, *report.contract.folds[1:]),
         artifacts=report.contract.artifacts,
@@ -84,6 +98,11 @@ def test_contract_builder_uses_manifest_and_fold_outputs() -> None:
     assert contract.parameters["strategy_name"] == report.config.strategy_name
     assert contract.artifacts["backtest_report"] == "docs/benchmarks/mini_backtest_orchestration.md"
     assert contract.folds[0].test_metrics.observations > 0
+    assert contract.model_version == "research_demo_v1"
+    assert any(feature.name == "cvar_action_score" for feature in contract.features)
+    assert contract.cost_stress
+    assert contract.regime_breakdown
+    assert contract.benchmark_comparison
 
 
 def test_contract_can_be_reviewed_without_internal_manifest_objects() -> None:
@@ -95,6 +114,8 @@ def test_contract_can_be_reviewed_without_internal_manifest_objects() -> None:
     assert review.run_id == contract.run_id
     assert review.decision in {"paper_trade_candidate", "review_required"}
     assert any(finding.category == "contract" for finding in review.findings)
+    assert any(finding.category == "leakage" for finding in review.findings)
+    assert any(finding.category == "regime" for finding in review.findings)
     assert "Trading Experiment Audit Report" in review.to_markdown()
 
 
@@ -105,3 +126,28 @@ def test_contract_review_rejects_under_strict_policy() -> None:
 
     assert review.decision == "reject"
     assert any(finding.severity == "fail" for finding in review.findings)
+
+
+def test_contract_validator_rejects_non_train_only_feature() -> None:
+    report = run_research_cycle("HMM regime features improve pair spread entries")
+    contract = ExperimentRunContract(
+        schema_version=report.contract.schema_version,
+        run_id=report.contract.run_id,
+        manifest_run_id=report.contract.manifest_run_id,
+        runner=report.contract.runner,
+        strategy_name=report.contract.strategy_name,
+        model_version=report.contract.model_version,
+        data_source=report.contract.data_source,
+        allow_live_trading=report.contract.allow_live_trading,
+        features=(FeatureContract("leaky_feature", "full_sample"),),
+        cost_stress=report.contract.cost_stress,
+        regime_breakdown=report.contract.regime_breakdown,
+        benchmark_comparison=report.contract.benchmark_comparison,
+        parameters=report.contract.parameters,
+        folds=report.contract.folds,
+        artifacts=report.contract.artifacts,
+        public_boundary=report.contract.public_boundary,
+    )
+
+    with pytest.raises(ValueError, match="train_only"):
+        validate_experiment_run_contract(contract)

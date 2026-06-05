@@ -87,6 +87,10 @@ def audit_experiment(
             "manifest completeness",
             "time-ordered fold structure",
             "validation/test separation",
+            "feature fit scope",
+            "cost stress",
+            "regime breakdown",
+            "benchmark comparison",
             "risk metrics and tail behavior",
             "public/private operational boundary",
         ),
@@ -219,6 +223,32 @@ def _audit_contract_completeness(
         )
     else:
         findings.append(_pass("contract", "Contract includes expected report artifacts.", "Keep artifact paths stable."))
+
+    if all(feature.fit_scope == "train_only" for feature in contract.features):
+        findings.append(_pass("leakage", "All contract features declare train-only fit scope.", "Keep fit scope explicit."))
+    else:
+        findings.append(
+            _fail(
+                "leakage",
+                "At least one contract feature is not train-only.",
+                "Require train-only feature fitting before promotion review.",
+            )
+        )
+
+    if contract.cost_stress:
+        findings.append(_pass("cost", "Contract includes cost-stress scenarios.", "Keep cost stress in promotion review."))
+    else:
+        findings.append(_fail("cost", "Contract has no cost-stress scenarios.", "Export cost stress before promotion review."))
+
+    if contract.regime_breakdown:
+        findings.append(_pass("regime", "Contract includes regime breakdown.", "Keep regime-level fragility visible."))
+    else:
+        findings.append(_fail("regime", "Contract has no regime breakdown.", "Export regime breakdown before promotion review."))
+
+    if contract.benchmark_comparison:
+        findings.append(_pass("benchmark", "Contract includes benchmark comparison.", "Compare against a baseline."))
+    else:
+        findings.append(_warn("benchmark", "Contract has no benchmark comparison.", "Export benchmark deltas before promotion review."))
     return tuple(findings)
 
 
