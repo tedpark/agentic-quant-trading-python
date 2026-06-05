@@ -73,8 +73,10 @@ runs.
 The current demo implements this as:
 
 ```bash
+make agent-builder-demo
 make research-cycle-demo
 make contract-review-demo
+quant-research build-agent --idea "HMM regime features improve pair spread entries"
 quant-research cycle --idea "HMM regime features improve pair spread entries"
 quant-research review --input docs/benchmarks/experiment_run_contract.json
 ```
@@ -82,6 +84,9 @@ quant-research review --input docs/benchmarks/experiment_run_contract.json
 Output:
 
 ```text
+docs/benchmarks/agent_builder_report.md
+docs/benchmarks/agent_spec.json
+docs/benchmarks/agent_builder_state.json
 docs/benchmarks/research_cycle_report.md
 docs/benchmarks/experiment_run_contract.json
 docs/benchmarks/research_workflow_state.json
@@ -131,19 +136,54 @@ This is the useful version of a chatbot for trading research. It is not a
 chatbot that trades. It is an operator that calls approved research tools and
 documents the result.
 
+## Agent Builder Layer
+
+The Wonderful-style version adds a meta agent:
+
+```text
+idea
+  -> build_agent_spec
+  -> validate_agent_spec
+  -> validate_experiment_config
+  -> run_research_cycle_from_config
+```
+
+The builder does not write runnable Python. It creates a structured `AgentSpec`:
+
+```json
+{
+  "role": "financial_ml_experiment_agent",
+  "allowed_tools": ["plan_experiment", "build_experiment_config", "run_mini_backtest"],
+  "constraints": ["no_arbitrary_code", "no_live_trading", "contract_only_promotion_review"],
+  "outputs": ["agent_spec", "experiment_run.v1", "markdown_report"]
+}
+```
+
+`validate_agent_spec()` rejects non-allowlisted tools, missing
+`experiment_run.v1` output, missing contract-only promotion review, and unsafe
+experiment configs. This is how an "agent that builds agents" stays bounded:
+the model can propose an agent spec, but the application executes only the
+validated config through registered runners.
+
 ## Current Implementation
 
 Implemented files:
 
 ```text
+src/agentic_quant/research_os/agent_builder.py
 src/agentic_quant/research_os/cycle.py
 src/agentic_quant/research_os/contract.py
 src/agentic_quant/research_os/cli.py
+src/agentic_quant/research_os/demo_agent_builder.py
 src/agentic_quant/research_os/demo_cycle.py
 src/agentic_quant/research_os/demo_contract_review.py
 tests/test_research_cycle.py
+tests/test_agent_builder.py
 tests/test_experiment_run_contract.py
 tests/test_research_cli.py
+docs/benchmarks/agent_builder_report.md
+docs/benchmarks/agent_spec.json
+docs/benchmarks/agent_builder_state.json
 docs/benchmarks/research_cycle_report.md
 docs/benchmarks/experiment_run_contract.json
 docs/benchmarks/research_workflow_state.json
@@ -153,6 +193,10 @@ docs/benchmarks/contract_promotion_review.md
 Implemented safeguards:
 
 - `build_experiment_config()` creates a dynamic config from an idea.
+- `build_agent_spec()` wraps the idea and dynamic config in a structured agent
+  definition.
+- `validate_agent_spec()` checks role, allowed tools, safety constraints,
+  required outputs, and config validity before any runner dispatch.
 - `validate_experiment_config()` checks runner, strategy, data source, safety,
   window sizes, thresholds, and transaction cost.
 - `_runner_registry()` maps approved runner ids to implementation functions.
@@ -218,6 +262,8 @@ LangGraph-style nodes:
 
 ```text
 idea
+  -> build_agent_spec
+  -> validate_agent_spec
   -> plan_experiment
   -> validate_experiment_config
   -> run_registered_runner

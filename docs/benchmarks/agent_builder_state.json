@@ -1,0 +1,12 @@
+{
+  "agent_spec_built": true,
+  "agent_spec_validated": true,
+  "completed_steps": [
+    "build_agent_spec",
+    "validate_agent_spec",
+    "run_research_cycle_from_agent_spec"
+  ],
+  "config_validated": true,
+  "cycle_completed": true,
+  "idea": "HMM regime features improve pair spread entries"
+}

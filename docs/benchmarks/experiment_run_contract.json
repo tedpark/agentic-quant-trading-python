@@ -191,10 +191,10 @@
       ]
     }
   ],
-  "manifest_run_id": "6e729a7f9eda",
+  "manifest_run_id": "2256975f1fb9",
   "model_version": "research_demo_v1",
   "parameters": {
-    "idea": "HMM sideways regime improves mean-reversion entries for cointegrated pairs",
+    "idea": "HMM regime features improve pair spread entries",
     "step_size": 24,
     "strategy_name": "pair_mean_reversion_regime_filter",
     "test_size": 24,
@@ -229,7 +229,7 @@
       "regime": "low_vol"
     }
   ],
-  "run_id": "9ff3bb850f5f",
+  "run_id": "0ce5bbd59dae",
   "runner": "mini_backtest",
   "schema_version": "experiment_run.v1",
   "strategy_name": "pair_mean_reversion_regime_filter"

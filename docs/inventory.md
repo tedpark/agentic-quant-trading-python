@@ -19,6 +19,7 @@ This repo is a sanitized public companion. It does not mirror the private tradin
 | HMM-style regime feature pipeline | done | Fits feature standardization and regime model on training windows only. |
 | Mini backtest orchestration | done | Connects synthetic features, regimes, validation selection, transaction costs, and CVaR-style metrics. |
 | Experiment manifest / run log | done | Records parameters, validation protocol, artifacts, and public/private boundaries for reproducible public runs. |
+| Agent Builder spec / validator | done | Turns an idea into a validated financial ML experiment agent spec, then dispatches only allowlisted runners. |
 
 ## Keep Private
 
@@ -51,6 +52,7 @@ FastAPI + PyTorch checkpoint hot reload + model_version response
 - HMM-style regime labels and rolling feature pipeline
 - Mini backtest orchestration for an end-to-end synthetic experiment loop
 - Experiment manifest / run log for synthetic public artifacts
+- Agent Builder spec, validator, workflow state, and contract export
 
 ## Next Public Module Candidate
 

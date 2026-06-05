@@ -1,0 +1,49 @@
+{
+  "agent_id": "financial_ml_experiment_agent:0ce5bbd59dae",
+  "allowed_tools": [
+    "plan_experiment",
+    "build_experiment_config",
+    "run_mini_backtest",
+    "build_manifest",
+    "audit_experiment",
+    "write_report"
+  ],
+  "config": {
+    "allow_live_trading": false,
+    "data_source": "synthetic_market_bars",
+    "idea": "HMM regime features improve pair spread entries",
+    "run_id": "0ce5bbd59dae",
+    "runner": "mini_backtest",
+    "step_size": 24,
+    "strategy_name": "pair_mean_reversion_regime_filter",
+    "test_size": 24,
+    "thresholds": [
+      0.0,
+      0.4,
+      0.8,
+      1.2
+    ],
+    "train_size": 90,
+    "transaction_cost": 0.0004,
+    "validation_size": 24
+  },
+  "constraints": [
+    "contract_only_promotion_review",
+    "leakage_aware_validation",
+    "no_arbitrary_code",
+    "no_live_trading",
+    "public_or_synthetic_data_only"
+  ],
+  "goal": "Run a leakage-aware financial ML experiment from the idea, using only the `mini_backtest` runner and exporting an experiment_run.v1 contract.",
+  "idea": "HMM regime features improve pair spread entries",
+  "outputs": [
+    "agent_spec",
+    "dynamic_config",
+    "experiment_manifest",
+    "experiment_run.v1",
+    "workflow_state_trace",
+    "promotion_review",
+    "markdown_report"
+  ],
+  "role": "financial_ml_experiment_agent"
+}

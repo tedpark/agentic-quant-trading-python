@@ -10,6 +10,7 @@ The first useful product is a tested experiment promotion layer:
 research artifacts -> cited answers -> experiment plans -> validation reports
 trading experiment outputs -> promotion gate -> paper-trading review decision
 trading idea -> allowlisted tool calls -> research cycle report
+research idea -> agent spec -> validated config -> allowlisted runner -> contract
 ```
 
 This matters because financial ML credibility comes from leakage control,
@@ -112,6 +113,7 @@ src/agentic_quant/research_os/
   graph.py        # financial ML concept graph extraction
   audit.py        # trading experiment validation and risk audit layer
   contract.py     # stable experiment_run.v1 contract export and validation
+  agent_builder.py # Wonderful-style agent spec builder and validator
   copilot.py      # cited answer composer
   planner.py      # hypothesis-to-experiment planner and YAML manifest export
   schema.py       # typed artifacts, chunks, citations, graph nodes, answers
@@ -161,6 +163,21 @@ docs/benchmarks/experiment_run_contract.json
 docs/benchmarks/research_workflow_state.json
 ```
 
+Agent builder demo:
+
+```bash
+make agent-builder-demo
+```
+
+Agent builder output:
+
+```text
+docs/benchmarks/agent_builder_report.md
+docs/benchmarks/agent_spec.json
+docs/benchmarks/agent_builder_state.json
+docs/benchmarks/experiment_run_contract.json
+```
+
 Contract-only promotion review:
 
 ```bash
@@ -176,9 +193,23 @@ docs/benchmarks/contract_promotion_review.md
 CLI:
 
 ```bash
+quant-research build-agent --idea "HMM regime features improve pair spread entries"
 quant-research cycle --idea "HMM regime features improve pair spread entries"
 quant-research review --input docs/benchmarks/experiment_run_contract.json
 ```
+
+The agent builder adds a Wonderful-style meta layer:
+
+```text
+build_agent_spec()
+  -> validate_agent_spec()
+  -> validate_experiment_config()
+  -> run_research_cycle_from_config()
+```
+
+The generated agent is not executable Python. It is a structured spec with an
+agent id, role, goal, dynamic experiment config, allowed tools, safety
+constraints, and required outputs.
 
 The research cycle now has three explicit layers:
 
@@ -194,6 +225,9 @@ build_experiment_config()
 The config is dynamic, but execution is constrained by an allowlist. This keeps
 the chat interface flexible while preventing arbitrary shell or live-trading
 execution.
+
+This is the useful version of "an agent that builds agents": the builder creates
+a validated agent spec and config, but only registered application code can run.
 
 Concept document:
 
@@ -215,6 +249,7 @@ Done:
 - YAML experiment manifest export
 - trading experiment audit reports
 - allowlisted research cycle runner
+- Wonderful-style agent spec builder
 - experiment_run.v1 contract export and validation
 - feature fit scope, cost stress, regime breakdown, and benchmark comparison in the contract
 - CI-friendly tests
@@ -223,14 +258,14 @@ Next:
 
 1. Add a real trading-system adapter that exports `experiment_run.v1`.
 2. Add citation coverage and answer-support evaluation for Research OS answers.
-3. Add a small UI page on `quantsigma.ai` showing the Research OS pipeline.
+3. Add a small UI page on `quantsigma.ai` showing the Agent Builder pipeline.
 4. Publish a LinkedIn / Medium post explaining why quant research is an
    experiment lifecycle problem, not a chat problem.
 5. Add one portfolio bullet:
 
 ```text
-Built QuantSigma Research OS, a deterministic financial ML research operator that
-turns ideas into validated experiment configs, dispatches allowlisted backtest
-runners, exports `experiment_run.v1` contracts, and applies a promotion gate for
-leakage, validation, turnover, and tail-risk checks.
+Built QuantSigma Agent Builder, a deterministic financial ML research operator
+that turns ideas into validated agent specs and experiment configs, dispatches
+allowlisted backtest runners, exports `experiment_run.v1` contracts, and applies
+a promotion gate for leakage, validation, turnover, and tail-risk checks.
 ```

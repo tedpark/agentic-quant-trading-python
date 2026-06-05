@@ -5,6 +5,14 @@ from agentic_quant.research_os.audit import (
     audit_experiment,
     audit_experiment_run_contract,
 )
+from agentic_quant.research_os.agent_builder import (
+    AgentBuilderReport,
+    AgentBuilderState,
+    AgentSpec,
+    build_agent_spec,
+    run_agent_builder,
+    validate_agent_spec,
+)
 from agentic_quant.research_os.copilot import answer_question
 from agentic_quant.research_os.contract import (
     ExperimentRunContract,
@@ -53,6 +61,9 @@ __all__ = [
     "ResearchCycleConfig",
     "ResearchCycleReport",
     "ResearchWorkflowState",
+    "AgentBuilderReport",
+    "AgentBuilderState",
+    "AgentSpec",
     "ExperimentRunContract",
     "BenchmarkComparisonContract",
     "CostStressContract",
@@ -63,13 +74,16 @@ __all__ = [
     "answer_question",
     "audit_experiment",
     "audit_experiment_run_contract",
+    "build_agent_spec",
     "build_research_graph",
     "build_research_index",
     "build_experiment_run_contract",
     "parse_experiment_run_contract",
     "plan_experiment",
     "run_research_cycle",
+    "run_agent_builder",
     "search_index",
     "validate_experiment_config",
+    "validate_agent_spec",
     "validate_experiment_run_contract",
 ]

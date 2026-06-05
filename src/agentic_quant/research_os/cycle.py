@@ -249,14 +249,20 @@ def validate_experiment_config(config: ResearchCycleConfig) -> ResearchCycleConf
 
 
 def run_research_cycle(idea: str, *, policy: PromotionPolicy = PromotionPolicy()) -> ResearchCycleReport:
-    tool_calls: list[ResearchToolCall] = []
-    state = ResearchWorkflowState(idea=idea)
+    return run_research_cycle_from_config(build_experiment_config(idea), policy=policy)
 
-    plan = plan_experiment(idea)
-    tool_calls.append(_tool_call("plan_experiment", {"idea": idea}, "created leakage-aware experiment plan"))
+
+def run_research_cycle_from_config(
+    config: ResearchCycleConfig, *, policy: PromotionPolicy = PromotionPolicy()
+) -> ResearchCycleReport:
+    config = validate_experiment_config(config)
+    tool_calls: list[ResearchToolCall] = []
+    state = ResearchWorkflowState(idea=config.idea)
+
+    plan = plan_experiment(config.idea)
+    tool_calls.append(_tool_call("plan_experiment", {"idea": config.idea}, "created leakage-aware experiment plan"))
     state = state.with_step("plan_experiment")
 
-    config = validate_experiment_config(build_experiment_config(idea))
     state = state.with_step("validate_experiment_config", run_id=config.run_id, config_validated=True)
     tool_calls.append(
         _tool_call(
