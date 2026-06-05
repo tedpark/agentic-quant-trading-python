@@ -4,14 +4,23 @@
 
 QuantSigma Research OS is not a trading chatbot.
 
-It is a financial ML research workflow engine that helps turn research notes,
-benchmark reports, model cards, and experiment artifacts into:
+The stronger first product is more specific:
+
+```text
+QuantSigma Experiment Promotion Gate
+```
+
+It is a validation and promotion layer for ML-based trading systems. It helps
+turn research notes, benchmark reports, model cards, and experiment artifacts
+into:
 
 - cited answers
 - a financial ML concept graph
 - leakage-aware experiment plans
 - YAML experiment manifests
 - validation and risk warnings
+- trading experiment audit reports
+- promotion decisions
 
 The current implementation runs as a Python engine and demo command. A web chat
 UI can be added later, but the product should not be reduced to a chat window.
@@ -32,16 +41,30 @@ read artifacts
   -> export a YAML manifest
 ```
 
+It can also run a trading experiment audit workflow:
+
+```text
+trading system backtest folds + experiment manifest
+  -> check time ordering
+  -> check validation/test separation
+  -> check leakage controls
+  -> check turnover, CVaR, Sharpe, and failed folds
+  -> check public/private execution boundary
+  -> produce reject / review_required / paper_trade_candidate decision
+```
+
 Runnable command:
 
 ```bash
 make research-os-demo
+make experiment-audit-demo
 ```
 
 Generated output:
 
 ```text
 docs/benchmarks/research_os_demo.md
+docs/benchmarks/trading_experiment_audit.md
 ```
 
 ## What It Does Not Do
@@ -57,6 +80,35 @@ It does not:
 Those boundaries are intentional. The public project should show engineering
 discipline without leaking strategy details or making investment claims.
 
+## Why Use This If a Trading System Already Exists?
+
+A trading system can produce signals, backtests, model outputs, and run logs.
+That does not automatically mean the experiment is trustworthy.
+
+This layer answers a different question:
+
+```text
+Should this trading experiment be trusted, rejected, or reviewed before promotion?
+```
+
+It is useful when the trading system already exists because it checks the parts
+that often break financial ML work:
+
+- train/validation/test ordering
+- leakage-prone feature fitting
+- threshold selection behavior
+- validation-to-test degradation
+- regime-specific fragility
+- tail risk and turnover
+- transaction-cost sensitivity
+- whether public artifacts accidentally imply live execution
+
+The trading system generates the experiment. QuantSigma Research OS should act
+as the promotion gate that decides whether the experiment can move forward.
+
+That distinction matters. A report is optional; a promotion gate becomes part of
+the workflow.
+
 ## Why This Is Better Than a Generic RAG Chatbot
 
 A generic RAG chatbot answers questions over documents.
@@ -64,7 +116,7 @@ A generic RAG chatbot answers questions over documents.
 QuantSigma Research OS should answer a narrower and more valuable question:
 
 ```text
-How should this financial ML idea become a testable, reproducible experiment?
+Can this financial ML experiment be promoted, and what blocks it?
 ```
 
 That requires more than retrieval:
@@ -86,7 +138,7 @@ The differentiator is not "chat with my quant notes." The differentiator is
 Current:
 
 ```text
-Python research engine + generated demo report
+Python validation/research engine + generated demo reports
 ```
 
 Near-term:
@@ -100,9 +152,9 @@ Long-term:
 ```text
 Research Console
   left: artifacts
-  center: cited answer
-  right: experiment plan and risk warnings
-  bottom: generated manifest and validation report
+  center: promotion decision
+  right: validation, leakage, risk, and cost warnings
+  bottom: generated manifest and promotion checklist
 ```
 
 ## Example
@@ -121,12 +173,13 @@ Output:
 - purged / embargo leakage warning
 - CVaR risk check
 - YAML experiment manifest
+- promotion decision such as `paper_trade_candidate`, `review_required`, or `reject`
 
 This is the story to use in portfolio and interviews:
 
 ```text
-I am building a financial ML research workflow engine, not an auto-trading bot.
-It uses RAG-style retrieval, a domain-specific research graph, and deterministic
-evaluation/export steps to make quant experiments more reproducible and less
-prone to leakage.
+I am building a promotion-gate layer for ML-based trading experiments, not an
+auto-trading bot. It reviews backtest folds, manifests, leakage controls,
+validation behavior, turnover, and tail risk, then decides whether a candidate is
+ready for paper-trading review or should be rejected.
 ```

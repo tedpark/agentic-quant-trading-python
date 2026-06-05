@@ -1,3 +1,4 @@
+from agentic_quant.research_os.audit import AuditFinding, ExperimentAuditReport, PromotionPolicy, audit_experiment
 from agentic_quant.research_os.copilot import answer_question
 from agentic_quant.research_os.graph import build_research_graph
 from agentic_quant.research_os.ingest import build_research_index
@@ -21,7 +22,11 @@ __all__ = [
     "ResearchEdge",
     "ResearchGraph",
     "ResearchNode",
+    "AuditFinding",
+    "ExperimentAuditReport",
+    "PromotionPolicy",
     "answer_question",
+    "audit_experiment",
     "build_research_graph",
     "build_research_index",
     "plan_experiment",

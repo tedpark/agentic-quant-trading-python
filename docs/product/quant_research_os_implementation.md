@@ -4,10 +4,11 @@
 
 Do not start with a generic chat UI or an AI backtest analyzer.
 
-The first useful product is a tested research workflow engine:
+The first useful product is a tested experiment promotion layer:
 
 ```text
 research artifacts -> cited answers -> experiment plans -> validation reports
+trading experiment outputs -> promotion gate -> paper-trading review decision
 ```
 
 This matters because financial ML credibility comes from leakage control,
@@ -35,7 +36,26 @@ artifact ingestion -> retrieval -> graph extraction -> cited answer -> manifest 
 
 It does not execute live orders, connect to brokers, expose private alpha logic,
 or make investment recommendations. A chat UI can be added later, but the core
-product is a financial ML research workflow engine.
+product is a financial ML experiment promotion layer.
+
+## Why Existing Trading Systems Still Need It
+
+The trading system produces candidate signals, backtest folds, metrics, and run
+logs. QuantSigma Research OS reviews whether those outputs are eligible for the
+next stage.
+
+The review layer checks:
+
+- time-ordered fold structure
+- validation/test separation
+- train-only fitting language
+- threshold selection behavior
+- validation-to-test degradation
+- CVaR and tail-risk metrics
+- turnover and transaction-cost exposure
+- public/private execution boundary
+
+The strongest product verb is not `chat`. It is `promote` or `reject`.
 
 ## MVP 1: Research Copilot
 
@@ -89,6 +109,7 @@ src/agentic_quant/research_os/
   ingest.py       # Markdown artifact ingestion and section chunking
   search.py       # deterministic keyword retrieval
   graph.py        # financial ML concept graph extraction
+  audit.py        # trading experiment validation and risk audit layer
   copilot.py      # cited answer composer
   planner.py      # hypothesis-to-experiment planner and YAML manifest export
   schema.py       # typed artifacts, chunks, citations, graph nodes, answers
@@ -112,10 +133,23 @@ Demo output:
 docs/benchmarks/research_os_demo.md
 ```
 
+Experiment audit demo:
+
+```bash
+make experiment-audit-demo
+```
+
+Audit output:
+
+```text
+docs/benchmarks/trading_experiment_audit.md
+```
+
 Concept document:
 
 ```text
 docs/product/what_is_quant_research_os.md
+docs/product/product_reality_check.md
 ```
 
 ## Next Build Steps
@@ -128,6 +162,7 @@ Done:
 - financial ML research graph
 - hypothesis-to-experiment planning
 - YAML experiment manifest export
+- trading experiment audit reports
 - CI-friendly tests
 
 Next:
