@@ -19,6 +19,7 @@ def main() -> None:
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(report.to_markdown(), encoding="utf-8")
+    (output.parent / "experiment_run_contract.json").write_text(report.contract.to_json(), encoding="utf-8")
 
 
 if __name__ == "__main__":

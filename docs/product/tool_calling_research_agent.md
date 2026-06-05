@@ -80,6 +80,7 @@ Output:
 
 ```text
 docs/benchmarks/research_cycle_report.md
+docs/benchmarks/experiment_run_contract.json
 ```
 
 ## Safety Boundary
@@ -131,9 +132,12 @@ Implemented files:
 
 ```text
 src/agentic_quant/research_os/cycle.py
+src/agentic_quant/research_os/contract.py
 src/agentic_quant/research_os/demo_cycle.py
 tests/test_research_cycle.py
+tests/test_experiment_run_contract.py
 docs/benchmarks/research_cycle_report.md
+docs/benchmarks/experiment_run_contract.json
 ```
 
 Implemented safeguards:
@@ -142,6 +146,10 @@ Implemented safeguards:
 - `validate_experiment_config()` checks runner, strategy, data source, safety,
   window sizes, thresholds, and transaction cost.
 - `_runner_registry()` maps approved runner ids to implementation functions.
+- `build_experiment_run_contract()` exports the stable `experiment_run.v1`
+  contract that downstream promotion gates can validate.
+- `validate_experiment_run_contract()` rejects live-trading contracts,
+  non-time-ordered folds, missing artifacts, and weak public boundaries.
 - The generated report records the tool-call trace.
 
 The generated report records:
@@ -153,15 +161,21 @@ The generated report records:
 - manifest snapshot
 - promotion-gate decision
 
-## Next Real Integration
+## Stable Contract
 
-The next useful step is a strict JSON adapter:
+The real integration point is now a strict JSON adapter:
 
 ```text
 experiment_run.json
 ```
 
-The trading system should export that file, and the agent should run:
+The current demo writes:
+
+```text
+docs/benchmarks/experiment_run_contract.json
+```
+
+The trading system should export the same schema, and the agent should run:
 
 ```bash
 quant-gate review experiment_run.json

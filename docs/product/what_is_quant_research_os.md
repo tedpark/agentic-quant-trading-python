@@ -83,6 +83,7 @@ Generated output:
 docs/benchmarks/research_os_demo.md
 docs/benchmarks/trading_experiment_audit.md
 docs/benchmarks/research_cycle_report.md
+docs/benchmarks/experiment_run_contract.json
 ```
 
 ## What It Does Not Do

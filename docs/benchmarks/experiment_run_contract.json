@@ -1,0 +1,175 @@
+{
+  "allow_live_trading": false,
+  "artifacts": {
+    "audit_report": "docs/benchmarks/trading_experiment_audit.md",
+    "backtest_report": "docs/benchmarks/mini_backtest_orchestration.md",
+    "cycle_report": "docs/benchmarks/research_cycle_report.md",
+    "manifest_report": "docs/benchmarks/experiment_manifest.md"
+  },
+  "data_source": "synthetic_market_bars",
+  "folds": [
+    {
+      "fold": 1,
+      "selected_threshold": 1.2,
+      "test_metrics": {
+        "cvar": 0.0,
+        "hit_rate": 1.0,
+        "max_drawdown": 0.0,
+        "mean_return": 8.674242424242715e-05,
+        "observations": 24,
+        "sharpe": 3.310063706204223,
+        "turnover": 0.041666666666666664
+      },
+      "test_range": [
+        124,
+        147
+      ],
+      "train_range": [
+        10,
+        99
+      ],
+      "validation_metrics": {
+        "cvar": -0.00043136363636363744,
+        "hit_rate": 0.75,
+        "max_drawdown": -0.0021568181818181873,
+        "mean_return": 7.509469696970104e-05,
+        "observations": 24,
+        "sharpe": 1.8461645656416394,
+        "turnover": 0.16666666666666666
+      },
+      "validation_range": [
+        100,
+        123
+      ]
+    },
+    {
+      "fold": 2,
+      "selected_threshold": 1.2,
+      "test_metrics": {
+        "cvar": -0.0010954545454545494,
+        "hit_rate": 0.4,
+        "max_drawdown": -0.0037227272727272716,
+        "mean_return": 1.9507575757574834e-05,
+        "observations": 24,
+        "sharpe": 0.2801318565109455,
+        "turnover": 0.20833333333333334
+      },
+      "test_range": [
+        148,
+        171
+      ],
+      "train_range": [
+        34,
+        123
+      ],
+      "validation_metrics": {
+        "cvar": -0.00012909090909090973,
+        "hit_rate": 0.5,
+        "max_drawdown": -0.0006454545454545487,
+        "mean_return": 5.984848484848762e-05,
+        "observations": 24,
+        "sharpe": 2.1550193819353667,
+        "turnover": 0.08333333333333333
+      },
+      "validation_range": [
+        124,
+        147
+      ]
+    },
+    {
+      "fold": 3,
+      "selected_threshold": 0.8,
+      "test_metrics": {
+        "cvar": -0.0024472727272727333,
+        "hit_rate": 0.46153846153846156,
+        "max_drawdown": -0.004200000000000004,
+        "mean_return": 0.00043655303030302745,
+        "observations": 24,
+        "sharpe": 2.5845007079622486,
+        "turnover": 0.5416666666666666
+      },
+      "test_range": [
+        172,
+        195
+      ],
+      "train_range": [
+        58,
+        147
+      ],
+      "validation_metrics": {
+        "cvar": -0.001890000000000006,
+        "hit_rate": 0.5,
+        "max_drawdown": -0.0043590909090908845,
+        "mean_return": 0.00020852272727272787,
+        "observations": 24,
+        "sharpe": 1.663294063843947,
+        "turnover": 0.3333333333333333
+      },
+      "validation_range": [
+        148,
+        171
+      ]
+    },
+    {
+      "fold": 4,
+      "selected_threshold": 0.0,
+      "test_metrics": {
+        "cvar": -0.002926363636363643,
+        "hit_rate": 0.5217391304347826,
+        "max_drawdown": -0.008136363636363594,
+        "mean_return": 0.000960984848484843,
+        "observations": 24,
+        "sharpe": 4.387336463140422,
+        "turnover": 0.9583333333333334
+      },
+      "test_range": [
+        196,
+        219
+      ],
+      "train_range": [
+        82,
+        171
+      ],
+      "validation_metrics": {
+        "cvar": -0.0030718181818181864,
+        "hit_rate": 0.4782608695652174,
+        "max_drawdown": -0.008136363636363594,
+        "mean_return": 0.0007914772727272717,
+        "observations": 24,
+        "sharpe": 3.5085341448325202,
+        "turnover": 0.9583333333333334
+      },
+      "validation_range": [
+        172,
+        195
+      ]
+    }
+  ],
+  "manifest_run_id": "6e729a7f9eda",
+  "parameters": {
+    "idea": "HMM sideways regime improves mean-reversion entries for cointegrated pairs",
+    "step_size": 24,
+    "strategy_name": "pair_mean_reversion_regime_filter",
+    "test_size": 24,
+    "thresholds": [
+      0.0,
+      0.4,
+      0.8,
+      1.2
+    ],
+    "train_size": 90,
+    "transaction_cost": 0.0004,
+    "validation_size": 24
+  },
+  "public_boundary": [
+    "synthetic data only",
+    "no private trading universe",
+    "no broker data or account data",
+    "no live execution logic",
+    "no production thresholds or private alpha features"
+  ],
+  "run_id": "9ff3bb850f5f",
+  "runner": "mini_backtest",
+  "schema_version": "experiment_run.v1",
+  "strategy_name": "pair_mean_reversion_regime_filter"
+}

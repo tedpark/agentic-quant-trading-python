@@ -9,6 +9,11 @@ from agentic_quant.experiments.manifest import ExperimentManifest, build_mini_ba
 from agentic_quant.experiments.orchestration import ExperimentFoldResult, run_mini_experiment
 from agentic_quant.features.regime import synthetic_market_bars
 from agentic_quant.research_os.audit import ExperimentAuditReport, PromotionPolicy, audit_experiment
+from agentic_quant.research_os.contract import (
+    ExperimentRunContract,
+    build_experiment_run_contract,
+    validate_experiment_run_contract,
+)
 from agentic_quant.research_os.planner import ExperimentPlan, plan_experiment
 
 
@@ -80,6 +85,7 @@ class ResearchCycleReport:
     plan: ExperimentPlan
     folds: tuple[ExperimentFoldResult, ...]
     manifest: ExperimentManifest
+    contract: ExperimentRunContract
     audit: ExperimentAuditReport
     tool_calls: tuple[ResearchToolCall, ...]
 
@@ -139,6 +145,12 @@ class ResearchCycleReport:
                 "",
                 "```json",
                 self.manifest.to_json(),
+                "```",
+                "",
+                "## Experiment Run Contract",
+                "",
+                "```json",
+                self.contract.to_json(),
                 "```",
                 "",
                 self.audit.to_markdown().rstrip(),
@@ -250,13 +262,24 @@ def run_research_cycle(idea: str, *, policy: PromotionPolicy = PromotionPolicy()
 
     audit = audit_experiment(manifest, folds, policy=policy)
     tool_calls.append(_tool_call("audit_experiment", {"decision": audit.decision}, "applied promotion gate"))
-    tool_calls.append(_tool_call("write_report", {"output": "docs/benchmarks/research_cycle_report.md"}, "rendered cycle report"))
+    contract = validate_experiment_run_contract(build_experiment_run_contract(config, manifest, folds))
+    tool_calls.append(
+        _tool_call(
+            "write_report",
+            {
+                "output": "docs/benchmarks/research_cycle_report.md",
+                "contract": "docs/benchmarks/experiment_run_contract.json",
+            },
+            "rendered cycle report and experiment_run contract",
+        )
+    )
 
     return ResearchCycleReport(
         config=config,
         plan=plan,
         folds=tuple(folds),
         manifest=manifest,
+        contract=contract,
         audit=audit,
         tool_calls=tuple(tool_calls),
     )

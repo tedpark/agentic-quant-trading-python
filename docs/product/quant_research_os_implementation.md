@@ -111,6 +111,7 @@ src/agentic_quant/research_os/
   search.py       # deterministic keyword retrieval
   graph.py        # financial ML concept graph extraction
   audit.py        # trading experiment validation and risk audit layer
+  contract.py     # stable experiment_run.v1 contract export and validation
   copilot.py      # cited answer composer
   planner.py      # hypothesis-to-experiment planner and YAML manifest export
   schema.py       # typed artifacts, chunks, citations, graph nodes, answers
@@ -156,6 +157,7 @@ Cycle output:
 
 ```text
 docs/benchmarks/research_cycle_report.md
+docs/benchmarks/experiment_run_contract.json
 ```
 
 The research cycle now has three explicit layers:
@@ -164,6 +166,7 @@ The research cycle now has three explicit layers:
 build_experiment_config()
   -> validate_experiment_config()
   -> runner registry dispatch
+  -> experiment_run.v1 contract export
 ```
 
 The config is dynamic, but execution is constrained by an allowlist. This keeps
@@ -189,18 +192,22 @@ Done:
 - hypothesis-to-experiment planning
 - YAML experiment manifest export
 - trading experiment audit reports
+- allowlisted research cycle runner
+- experiment_run.v1 contract export and validation
 - CI-friendly tests
 
 Next:
 
-1. Add citation coverage and answer-support evaluation for Research OS answers.
-2. Add a small UI page on `quantsigma.ai` showing the Research OS pipeline.
-3. Publish a LinkedIn / Medium post explaining why quant research is an
+1. Add a real trading-system adapter that exports `experiment_run.v1`.
+2. Add citation coverage and answer-support evaluation for Research OS answers.
+3. Add a small UI page on `quantsigma.ai` showing the Research OS pipeline.
+4. Publish a LinkedIn / Medium post explaining why quant research is an
    experiment lifecycle problem, not a chat problem.
-4. Add one portfolio bullet:
+5. Add one portfolio bullet:
 
 ```text
-Built QuantSigma Research OS, a deterministic financial ML research workflow engine
-that ingests research artifacts, extracts a validation/risk/feature graph, returns
-cited answers, and converts trading ideas into leakage-aware experiment manifests.
+Built QuantSigma Research OS, a deterministic financial ML research operator that
+turns ideas into validated experiment configs, dispatches allowlisted backtest
+runners, exports `experiment_run.v1` contracts, and applies a promotion gate for
+leakage, validation, turnover, and tail-risk checks.
 ```
