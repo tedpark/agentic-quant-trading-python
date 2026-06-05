@@ -75,6 +75,8 @@ The current demo implements this as:
 ```bash
 make research-cycle-demo
 make contract-review-demo
+quant-research cycle --idea "HMM regime features improve pair spread entries"
+quant-research review --input docs/benchmarks/experiment_run_contract.json
 ```
 
 Output:
@@ -136,10 +138,12 @@ Implemented files:
 ```text
 src/agentic_quant/research_os/cycle.py
 src/agentic_quant/research_os/contract.py
+src/agentic_quant/research_os/cli.py
 src/agentic_quant/research_os/demo_cycle.py
 src/agentic_quant/research_os/demo_contract_review.py
 tests/test_research_cycle.py
 tests/test_experiment_run_contract.py
+tests/test_research_cli.py
 docs/benchmarks/research_cycle_report.md
 docs/benchmarks/experiment_run_contract.json
 docs/benchmarks/research_workflow_state.json

@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 from argparse import ArgumentParser
-from pathlib import Path
 
-from agentic_quant.research_os.cycle import run_research_cycle
+from agentic_quant.research_os.cli import main as cli_main
 
 
 DEFAULT_IDEA = "HMM sideways regime improves mean-reversion entries for cointegrated pairs"
@@ -15,12 +14,21 @@ def main() -> None:
     parser.add_argument("--output", default="docs/benchmarks/research_cycle_report.md")
     args = parser.parse_args()
 
-    report = run_research_cycle(args.idea)
-    output = Path(args.output)
-    output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(report.to_markdown(), encoding="utf-8")
-    (output.parent / "experiment_run_contract.json").write_text(report.contract.to_json(), encoding="utf-8")
-    (output.parent / "research_workflow_state.json").write_text(report.state.to_json(), encoding="utf-8")
+    output = args.output
+    output_dir = output.rsplit("/", 1)[0] if "/" in output else "."
+    cli_main(
+        [
+            "cycle",
+            "--idea",
+            args.idea,
+            "--output",
+            output,
+            "--contract-output",
+            f"{output_dir}/experiment_run_contract.json",
+            "--state-output",
+            f"{output_dir}/research_workflow_state.json",
+        ]
+    )
 
 
 if __name__ == "__main__":

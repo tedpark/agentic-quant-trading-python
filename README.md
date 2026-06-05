@@ -190,10 +190,17 @@ make reload-demo
 make serve
 ```
 
+CLI:
+
+```bash
+quant-research cycle --idea "HMM regime features improve pair spread entries"
+quant-research review --input docs/benchmarks/experiment_run_contract.json
+```
+
 Current test coverage:
 
 ```text
-75 tests passing, including CVaR risk logic, drift monitoring, walk-forward validation, purged/embargoed validation, HMM-style regime features, mini backtest orchestration, experiment manifests, trading experiment audit checks, tool-calling research cycle checks, config validation checks, workflow state checks, richer experiment_run contract checks, contract-only promotion review checks, Numerai submission-format checks, RAG evaluation harness checks, Research OS checks, and a subprocess-backed uvicorn E2E test.
+77 tests passing, including CVaR risk logic, drift monitoring, walk-forward validation, purged/embargoed validation, HMM-style regime features, mini backtest orchestration, experiment manifests, trading experiment audit checks, tool-calling research cycle checks, config validation checks, workflow state checks, richer experiment_run contract checks, contract-only promotion review checks, CLI checks, Numerai submission-format checks, RAG evaluation harness checks, Research OS checks, and a subprocess-backed uvicorn E2E test.
 ```
 
 Drift report demo:

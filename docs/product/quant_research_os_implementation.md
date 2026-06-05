@@ -173,6 +173,13 @@ Contract review output:
 docs/benchmarks/contract_promotion_review.md
 ```
 
+CLI:
+
+```bash
+quant-research cycle --idea "HMM regime features improve pair spread entries"
+quant-research review --input docs/benchmarks/experiment_run_contract.json
+```
+
 The research cycle now has three explicit layers:
 
 ```text
