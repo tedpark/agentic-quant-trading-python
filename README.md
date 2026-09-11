@@ -4,6 +4,19 @@ Public companion lab for production-style financial ML/RL systems.
 
 This project is not investment advice, a trading signal service, or a live trading bot. It is a public engineering companion for showing how financial ML systems can be built, validated, served, monitored, and explained without exposing private strategy details.
 
+## Korean Books — Free Reading Editions
+
+Two Korean-language books on verifying AI-assisted software, with substantial free editions on WikiDocs:
+
+| Book | Focus | Free chapters | Suggested starting point |
+| --- | --- | --- | --- |
+| [AI가 만든 자동매매, 검증은 누가 할까?](https://wikidocs.net/book/21322) | Python data pipelines, backtest accounting, HMM regimes, position sizing and verification | Preface, 0–12 | Chapter 0: worked calculation; chapter 3: backtest accounting |
+| [AI와 끝까지 완성하는 Tauri 2 데스크톱 앱](https://wikidocs.net/book/21320) | Tauri 2, SvelteKit, Rust and Request → Build → Verify | Preface, 1–11 | Chapter 2: workflow; chapters 5 and 7: Tauri and database examples |
+
+The full paid PDF editions are in preparation. Core concepts are explained in the text with worked examples and verification criteria; access to private production repositories is not required to understand them.
+
+[한국어 책 소개와 읽는 순서](https://wikidocs.net/blog/@itstedpark/30889/) · [English introduction](https://itstedpark.medium.com/from-ai-generated-code-to-verified-systems-two-korean-books-you-can-start-reading-for-free-dc921806ae12)
+
 ## What This Project Demonstrates
 
 - Leakage-aware validation for financial time-series experiments
