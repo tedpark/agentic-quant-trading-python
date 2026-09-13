@@ -1,4 +1,24 @@
-# Tool-Calling Research Agent Design
+# Allowlisted Research Workflow and Tool-Calling Design
+
+## Current Implementation Boundary
+
+The public implementation now has two layers. The deterministic plain-Python
+research cycle derives a config with rule-based parsing and executes six
+approved domain tools in a fixed sequence. Above it,
+`OpenAIResponsesToolSelector` uses the OpenAI Responses API to select the next
+high-level action from strict JSON Schema function tools.
+
+The application validates the selected tool, order, and arguments against the
+durable state before execution. It writes an atomic checkpoint after every
+action and interrupts before `run_research_cycle` until a human explicitly
+approves or rejects the pending call. The OpenAI client is configured with a
+timeout and bounded retries, while response usage is recorded as input, output,
+and total tokens.
+
+Automated tests use an injected Responses client and do not make billable model
+calls. A live run requires `OPENAI_API_KEY` and `uv sync --extra agent`.
+
+Official API pattern: https://developers.openai.com/api/docs/guides/function-calling/
 
 ## Core Answer
 
@@ -16,9 +36,11 @@ Chat UI
   -> report
 ```
 
-The model should decide which approved tool to call and with which structured
-arguments. The application code should execute the tool, validate the result,
-and record the tool call.
+In the model-directed runtime, the model decides which approved high-level tool
+to call and supplies structured arguments. The application code validates the
+selection, interrupts for approval when required, executes the tool, and records
+the call and usage. The underlying research cycle retains deterministic domain
+execution and fail-closed contracts.
 
 The config is dynamic, but the schema is fixed. The agent can create a config
 draft, but the runner only executes it after validation.
@@ -202,6 +224,7 @@ src/agentic_quant/research_os/agent_builder.py
 src/agentic_quant/research_os/cycle.py
 src/agentic_quant/research_os/contract.py
 src/agentic_quant/research_os/cli.py
+src/agentic_quant/research_os/model_runtime.py
 src/agentic_quant/research_os/demo_agent_builder.py
 src/agentic_quant/research_os/demo_cycle.py
 src/agentic_quant/research_os/demo_contract_review.py
@@ -209,6 +232,7 @@ tests/test_research_cycle.py
 tests/test_agent_builder.py
 tests/test_experiment_run_contract.py
 tests/test_research_cli.py
+tests/test_model_agent_runtime.py
 docs/benchmarks/agent_builder_report.md
 docs/benchmarks/agent_spec.json
 docs/benchmarks/agent_builder_state.json
@@ -241,7 +265,16 @@ Implemented safeguards:
   file without needing internal Python manifest or fold objects.
 - `ResearchWorkflowState` records graph-style state transitions so the workflow
   can later move to LangGraph without changing product semantics.
-- The generated report records the tool-call trace.
+- `OpenAIResponsesToolSelector` sends strict function tools through the OpenAI
+  Responses API and accepts exactly one function call per routing step.
+- `validate_model_tool_call()` rejects non-allowlisted tools, out-of-order
+  actions, extra arguments, type mismatches, and values that do not match the
+  durable state.
+- `start_model_agent()` writes an atomic checkpoint after every action and
+  pauses before research execution.
+- `resume_model_agent()` persists explicit approval or rejection and resumes
+  from the same run-scoped artifact directory.
+- The generated report records the deterministic tool-execution trace.
 
 The generated report records:
 
@@ -288,8 +321,8 @@ That is the bridge from demo to real trading-system integration.
 
 ## LangGraph Readiness
 
-The current implementation is plain Python, but the state shape already maps to
-LangGraph-style nodes:
+The deterministic research cycle remains plain Python, and its state shape maps
+to LangGraph-style nodes:
 
 ```text
 idea
@@ -309,6 +342,7 @@ The exported state file is:
 docs/benchmarks/research_workflow_state.json
 ```
 
-This is useful because the workflow can later add checkpointing,
-human-in-the-loop approval, and resume behavior without changing the core
-trading research contract.
+The model-directed layer already persists
+`model_agent_runtime.v1` checkpoints and supports human approval, rejection,
+and resume without changing the core trading research contract. A future
+LangGraph adapter can reuse the same state and artifact boundaries.

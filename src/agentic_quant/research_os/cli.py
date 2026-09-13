@@ -15,6 +15,12 @@ from agentic_quant.research_os.agent_builder import (
 from agentic_quant.research_os.audit import audit_experiment_run_contract
 from agentic_quant.research_os.contract import parse_experiment_run_contract
 from agentic_quant.research_os.cycle import run_research_cycle
+from agentic_quant.research_os.model_runtime import (
+    OpenAIResponsesToolSelector,
+    load_model_agent_checkpoint,
+    resume_model_agent,
+    start_model_agent,
+)
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -31,6 +37,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 0
     if args.command == "review":
         _run_review(args)
+        return 0
+    if args.command == "model-agent":
+        _run_model_agent(args)
         return 0
     parser.print_help()
     return 2
@@ -64,6 +73,20 @@ def _parser() -> ArgumentParser:
     review = subcommands.add_parser("review", help="Review an experiment_run.v1 contract.")
     review.add_argument("--input", required=True)
     review.add_argument("--output", default="docs/benchmarks/contract_promotion_review.md")
+
+    model_agent = subcommands.add_parser(
+        "model-agent",
+        help="Run or resume an OpenAI Responses tool-selecting agent with a human approval gate.",
+    )
+    model_agent.add_argument("--idea", help="Start a new model-directed research workflow.")
+    model_agent.add_argument("--run-dir", default="docs/runs")
+    model_agent.add_argument("--resume", help="Resume a persisted model_agent_checkpoint.json file.")
+    approval = model_agent.add_mutually_exclusive_group()
+    approval.add_argument("--approve", action="store_true", help="Approve the pending research-cycle call.")
+    approval.add_argument("--reject", action="store_true", help="Reject the pending research-cycle call.")
+    model_agent.add_argument("--model", default="gpt-5.6")
+    model_agent.add_argument("--timeout", type=float, default=30.0)
+    model_agent.add_argument("--max-retries", type=int, default=2)
 
     return parser
 
@@ -120,6 +143,32 @@ def _run_review(args: Namespace) -> None:
     contract = parse_experiment_run_contract(contract_path.read_text(encoding="utf-8"))
     report = audit_experiment_run_contract(contract)
     output.write_text(report.to_markdown(), encoding="utf-8")
+
+
+def _run_model_agent(args: Namespace) -> None:
+    if bool(args.idea) == bool(args.resume):
+        raise ValueError("model-agent requires exactly one of --idea or --resume")
+    if args.idea and (args.approve or args.reject):
+        raise ValueError("approval flags are only valid with --resume")
+
+    model = args.model
+    checkpoint_path: Path | None = None
+    if args.resume:
+        checkpoint_path = Path(args.resume)
+        checkpoint = load_model_agent_checkpoint(checkpoint_path)
+        model = checkpoint.model
+        if not args.approve and not args.reject:
+            raise ValueError("resuming an approval checkpoint requires --approve or --reject")
+
+    selector = OpenAIResponsesToolSelector(
+        model=model,
+        timeout_seconds=args.timeout,
+        max_retries=args.max_retries,
+    )
+    if checkpoint_path is not None:
+        resume_model_agent(checkpoint_path, selector=selector, approve=args.approve)
+    else:
+        start_model_agent(args.idea, run_dir=Path(args.run_dir), selector=selector)
 
 
 if __name__ == "__main__":

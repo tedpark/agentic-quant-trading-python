@@ -4,19 +4,6 @@ Public companion lab for production-style financial ML/RL systems.
 
 This project is not investment advice, a trading signal service, or a live trading bot. It is a public engineering companion for showing how financial ML systems can be built, validated, served, monitored, and explained without exposing private strategy details.
 
-## Korean Books — Free Reading Editions
-
-Two Korean-language books on verifying AI-assisted software, with substantial free editions on WikiDocs:
-
-| Book | Focus | Free chapters | Suggested starting point |
-| --- | --- | --- | --- |
-| [AI가 만든 자동매매, 검증은 누가 할까?](https://wikidocs.net/book/21322) | Python data pipelines, backtest accounting, HMM regimes, position sizing and verification | Preface, 0–12 | Chapter 0: worked calculation; chapter 3: backtest accounting |
-| [AI와 끝까지 완성하는 Tauri 2 데스크톱 앱](https://wikidocs.net/book/21320) | Tauri 2, SvelteKit, Rust and Request → Build → Verify | Preface, 1–11 | Chapter 2: workflow; chapters 5 and 7: Tauri and database examples |
-
-The full paid PDF editions are in preparation. Core concepts are explained in the text with worked examples and verification criteria; access to private production repositories is not required to understand them.
-
-[한국어 책 소개와 읽는 순서](https://wikidocs.net/blog/@itstedpark/30889/) · [English introduction](https://itstedpark.medium.com/from-ai-generated-code-to-verified-systems-two-korean-books-you-can-start-reading-for-free-dc921806ae12)
-
 ## What This Project Demonstrates
 
 - Leakage-aware validation for financial time-series experiments
@@ -26,7 +13,9 @@ The full paid PDF editions are in preparation. Core concepts are explained in th
 - Mini backtest orchestration that connects features, regimes, validation, and CVaR-style risk metrics
 - Reproducible experiment manifests / run logs for public artifacts
 - Trading experiment audit reports for validation, leakage, turnover, and risk checks
-- Tool-calling research cycle with dynamic config generation, validation, runner dispatch, richer experiment_run contract export, manifest, audit, and report tools
+- Deterministic allowlisted research workflow with rule-based config generation, validation, runner dispatch, richer experiment_run contract export, manifest, audit, and report tools
+- OpenAI Responses model-directed tool selection with strict JSON schemas and application-side allowlist, order, and argument validation
+- Durable model-agent checkpoints with explicit human approval or rejection before the research cycle executes
 - Numerai benchmark-trail preparation with submission format validation
 - RAG evaluation harness with golden-set metrics, retrieval checks, citation coverage, and answer-support scoring
 - QuantSigma Research OS prototype for artifact ingestion, research graph extraction, cited answers, and hypothesis-to-experiment manifests
@@ -176,11 +165,14 @@ Private:
 12. Add deterministic RAG evaluation harness for LLM/RAG Evaluation roles. Done.
 13. Add QuantSigma Research OS prototype for cited quant research answers and experiment manifest planning. Done.
 14. Add trading experiment audit layer for validation, leakage, turnover, and risk review. Done.
-15. Add allowlisted tool-calling research cycle runner. Done.
+15. Add deterministic allowlisted research workflow runner. Done.
 16. Add stable `experiment_run.v1` contract export and validation. Done.
 17. Add graph-style workflow state snapshot for future LangGraph orchestration. Done.
 18. Add contract-only promotion review for external trading-system adapters. Done.
-19. Connect repo to QuantSigma.ai, Medium, and LinkedIn Featured.
+19. Add OpenAI Responses structured function-tool selector with token-usage tracing. Done.
+20. Add durable checkpoint/resume and human approval interrupt before research execution. Done.
+21. Add model-tool correctness, malformed-call, approval, rejection, and recovery tests. Done.
+22. Connect repo to QuantSigma.ai, Medium, and LinkedIn Featured.
 
 ## Local Commands
 
@@ -208,12 +200,24 @@ CLI:
 ```bash
 quant-research cycle --idea "HMM regime features improve pair spread entries"
 quant-research review --input docs/benchmarks/experiment_run_contract.json
+
+# Optional model-directed runtime. Requires OPENAI_API_KEY and the agent extra.
+uv sync --extra agent
+quant-research model-agent \
+  --idea "HMM regime features improve pair spread entries" \
+  --run-dir docs/runs \
+  --model gpt-5.6
+
+# The first command checkpoints before research execution. Resume explicitly.
+quant-research model-agent \
+  --resume docs/runs/<run_id>/model_agent_checkpoint.json \
+  --approve
 ```
 
 Current test coverage:
 
 ```text
-77 tests passing, including CVaR risk logic, drift monitoring, walk-forward validation, purged/embargoed validation, HMM-style regime features, mini backtest orchestration, experiment manifests, trading experiment audit checks, tool-calling research cycle checks, config validation checks, workflow state checks, richer experiment_run contract checks, contract-only promotion review checks, CLI checks, Numerai submission-format checks, RAG evaluation harness checks, Research OS checks, and a subprocess-backed uvicorn E2E test.
+98 repository-wide tests passing. The 35 core Agent tests cover the builder, research cycle, experiment contract, CLI, OpenAI Responses request/response adapter, strict tool-call validation, durable checkpoint/resume, human approval/rejection, and fail-closed recovery behavior. The remaining tests cover financial ML validation, risk, drift, serving, RAG evaluation, registry safety, and subprocess-backed uvicorn E2E behavior.
 ```
 
 Drift report demo:
@@ -288,7 +292,7 @@ Output:
 docs/benchmarks/trading_experiment_audit.md
 ```
 
-Tool-calling research cycle demo:
+Deterministic allowlisted research workflow demo:
 
 ```text
 make research-cycle-demo

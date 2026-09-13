@@ -16,6 +16,9 @@ where = ["src"]
 quant-research = "agentic_quant.research_os.cli:main"
 
 [project.optional-dependencies]
+agent = [
+  "openai>=1.99.0",
+]
 serving = [
   "fastapi>=0.115",
   "torch>=2.5",

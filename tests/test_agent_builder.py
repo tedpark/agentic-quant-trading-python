@@ -120,6 +120,8 @@ def test_cli_build_agent_writes_report_spec_contract_and_state(tmp_path: Path) -
     spec = tmp_path / "agent_spec.json"
     contract = tmp_path / "experiment_run.json"
     state = tmp_path / "agent_builder_state.json"
+    manifest = tmp_path / "agent_builder_run_manifest.json"
+    events = tmp_path / "agent_builder_events.jsonl"
 
     exit_code = main(
         [
@@ -134,6 +136,10 @@ def test_cli_build_agent_writes_report_spec_contract_and_state(tmp_path: Path) -
             str(contract),
             "--state-output",
             str(state),
+            "--manifest-output",
+            str(manifest),
+            "--event-log-output",
+            str(events),
         ]
     )
 
@@ -142,6 +148,8 @@ def test_cli_build_agent_writes_report_spec_contract_and_state(tmp_path: Path) -
     assert '"role": "financial_ml_experiment_agent"' in spec.read_text(encoding="utf-8")
     assert '"schema_version": "experiment_run.v1"' in contract.read_text(encoding="utf-8")
     assert '"cycle_completed": true' in state.read_text(encoding="utf-8")
+    assert '"schema_version": "agent_builder_run_manifest.v1"' in manifest.read_text(encoding="utf-8")
+    assert '"schema_version": "agent_builder_event.v1"' in events.read_text(encoding="utf-8")
 
 
 def test_cli_build_agent_can_replay_from_spec_input(tmp_path: Path) -> None:
